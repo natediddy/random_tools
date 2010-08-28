@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+# Android Zip Signing Tool
+# natediddy
+#
+
+ROOT=`dirname $0`
+cd $ROOT
+SIG_TOOLS=$ROOT/tools
+SELF=`basename $0`
+
+# Try to catch all possible errors (try at least)
+for KEY in "$SIG_TOOLS/signapk.jar"  "$SIG_TOOLS/testkey.pk8"  "$SIG_TOOLS/testkey.x509.pem"
+do
+	if [ ! -e "$KEY" ]
+	then
+		echo "\n$SELF: $KEY not found\n$SELF: Please ensure all signing keys exist in $SIG_TOOLS\n"
+		exit 1
+	fi
+done
+if [ "$#" -eq 0 ]
+then
+	echo "\n$SELF: You must provide zip filename(s) and/or its path(s)\n"
+	exit 1
+else
+	if [ "$1" = "-h" -o "$1" = "--help" ]
+	then
+		echo "\nSignZip\nby natediddy\n\nUsage: $0 [PATH/TO/ZIPNAME]"
+		echo "	-h"
+		echo "	--help	This help message\n"
+		exit 0
+	else
+		if [ "`which java`" = "" ]
+		then
+			echo "\n$SELF: Program 'java' not found on machine\nPlease install\n"
+			exit 1
+		fi
+	fi
+fi
+
+# If all went well above, attempt to sign
+for ZIP in "$@"
+do
+	if [ -e "$ZIP" ]
+	then
+		echo "\n"
+		echo "\n$SELF: Signing package: $ZIP...\n"
+		mkdir -p $ROOT/signed
+		SIGNED_ZIP=$ROOT/signed/`basename $ZIP .zip`-signed.zip
+
+		java -Xmx512m \
+			-jar $SIG_TOOLS/signapk.jar \
+			-w $SIG_TOOLS/testkey.x509.pem $SIG_TOOLS/testkey.pk8 \
+			$ZIP $SIGNED_ZIP
+
+		if [ -e "$SIGNED_ZIP" ]
+		then
+			echo "\n$SELF: Looks like everything went well...\n$SELF: New signed zip located at $SIGNED_ZIP"
+		else
+			echo "\n$SELF: Something went wrong, exiting\n"
+			exit 1
+		fi
+	else
+		echo "$SELF: $ZIP not found"
+		exit 1
+	fi
+done
+
+echo "\n\n"
+
+exit 0

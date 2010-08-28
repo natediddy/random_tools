@@ -1,0 +1,191 @@
+#!/system/bin/sh
+#
+# Backup & restore apk's from /data (FROYO)
+# natediddy
+#
+
+if [ "`getprop ro.build.version.sdk`" != "8" ]
+then
+	echo "$0 requires Android 2.2 firmware (froyo)"
+	exit 2
+else
+	for TOOL in "busybox" "sed"
+	do
+		if [ "`which $TOOL`" = "" ]
+		then
+			echo "$TOOL not found. Please install"
+			exit 2
+		fi
+	done
+fi
+
+SD_DIR=/sdcard/BACKED_UP_APPS
+DATA=/data/app
+DATE=`date +%b-%d-%I_%M%p`
+INFO_DOC=$SD_DIR/BACKUP_INFO.txt
+
+info_doc_message() {
+	echo "Thanx for using apptool!!" >$INFO_DOC
+	echo "by: natediddy" >>$INFO_DOC
+	echo "" >>$INFO_DOC
+	echo "=================================" >>$INFO_DOC
+	echo "BACKUP_DATE=$DATE" >>$INFO_DOC
+	echo "" >>$INFO_DOC
+	ls $SD_DIR/*/* >>$INFO_DOC
+	echo "=================================" >>$INFO_DOC
+}
+
+backup_apps() {
+	if [ -d "$SD_DIR" ]
+	then
+		rm -rf $SD_DIR
+	fi
+	echo "Starting new APP backup at $DATE"
+	echo
+	for APK in `find $DATA -name "*.apk"`
+	do
+		if [ -e "$APK" ]
+		then
+			mkdir -p $SD_DIR/app
+			echo "Backing up `basename $APK`"
+			cp $APK $SD_DIR/app
+		fi
+	done
+	for APK in `find $DATA-private -name "*.apk"`
+	do
+		if [ -e "$APK" ]
+		then
+			mkdir -p $SD_DIR/app-private
+			echo "Backing up `basename $APK`"
+			cp $APK $SD_DIR/app-private
+		fi
+	done
+	for APK in `find $SD_DIR/* -name "*.apk"`
+	do
+		if [ -e "$APK" ]
+		then
+			info_doc_message
+		else
+			echo "Apps were not backed up properly"
+			exit 1
+		fi
+	done
+	echo
+	echo "Finished backing up APPS at $DATE"
+	echo "Open $INFO_DOC for more details"
+	echo
+}
+
+restore_apps() {
+	if [ -e "$INFO_DOC" ]
+	then
+		echo "Installing previously backed up APPS from DATE: `sed -n -e'/BACKUP\_DATE/s/^.*=//p' $INFO_DOC`"
+		sleep 2
+	else
+		echo "$INFO_DOC not found!"
+		echo "Attempting to continue to try and restore IF backed up apps are present..."
+		sleep 2
+	fi
+	if [ -d "$SD_DIR/app" ]
+	then
+		for APK in `find $SD_DIR/app -name "*.apk"`
+		do
+			if [ -e "$APK" ]
+			then
+				echo
+				echo "Restoring `basename $APK`"
+				pm install $APK
+			else
+				echo
+				echo "No backed up APPS found in $SD_DIR/app"
+				echo "Skipping..."
+			fi
+		done
+	else
+		echo
+		echo "$SD_DIR/app directory not found"
+		echo "Skipping..."
+	fi
+	if [ -d "$SD_DIR/app-private" ]
+	then
+		for APK in `find $SD_DIR/app-private -name "*.apk"`
+		do
+			if [ -e "$APK" ]
+			then
+				echo
+				echo "Restoring `basename $APK`"
+				pm install $APK
+			else
+				echo
+				echo "No backed up APPS found in $SD_DIR/app-private"
+				echo "Skipping..."
+			fi
+		done
+	else
+		echo
+		echo "$SD_DIR/app-private directory not found"
+		echo "Skipping..."
+	fi
+	echo
+	echo "APP restore attempt finished at $DATE"
+	echo
+}
+
+usage() {
+	echo "Usage: $0 [OPTION] [INSTALL LOCATION]"
+	echo "-b	Backup APPS to $SD_DIR"
+	echo "-r	Restore apps (install APPS from $SD_DIR)"
+	echo "		Also takes the arguments 'device' or 'sd'"
+	echo "	device:	Sets APP install location to INTERNAL STORAGE"
+	echo "	    sd:	Sets APP install location to EXTERNAL STORAGE"
+	echo "		No argument provided with '-r' allows SYSTEM to decide install location"
+	echo "-h	This help menu"
+}
+
+case "$1" in
+	-b)
+		backup_apps
+		;;
+	-r)
+		case "$2" in
+			device)
+				pm setInstallLocation 1  # sets internal storage default
+				if [ $? -ne 0 ]
+				then
+					echo "Failed to set Install Location...Using default"
+					restore_apps
+				else
+					echo "Install Location Set To: INTERNAL STORAGE ONLY"
+					restore_apps
+				fi
+				;;
+			sd)
+				pm setInstallLocation 2  # sets external storage default
+				if [ $? -ne 0 ]
+				then
+					echo "Failed to set Install Location...Using default"
+					restore_apps
+				else
+					echo "Install Location Set To: EXTERNAL STORAGE ONLY"
+					restore_apps
+				fi
+				;;
+			*)
+				pm setInstallLocation 0  # allows system to decide best location
+				echo "Allowing SYSTEM TO DECIDE Install Location..."
+				restore_apps
+				;;
+		esac
+		;;
+	-h)
+		usage
+		exit 0
+		;;
+	*)
+		echo "'$1' is not a recognized option"
+		echo "Use -h for help"
+		exit 1
+		;;
+esac
+
+exit 0

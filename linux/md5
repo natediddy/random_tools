@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+#
+# Compares md5 checksums between files
+# nathanForbes
+#
+
+import os
+import sys
+import hashlib
+
+class CheckMD5s(object):
+  def file_exist(self, files=None):
+    self.files = files
+    
+        
+  def generate_md5s(self, files=None):
+    self.files = files
+    infiles = open(self.files, "rb")
+    content = infiles.read()
+    infiles.close()
+    m = hashlib.md5()
+    try:
+      m.update(content)
+      md5 = m.hexdigest()
+    except Exception, e:
+      print str(e) + ": Failed to generate md5sum for: " + self.files
+      sys.exit()
+    print "\n%s:\n	%s\n" % (self.files, md5)
+
+if __name__ == '__main__':
+  if len(sys.argv) > 1:
+    md = CheckMD5s()
+    for f in sys.argv[1:]:
+      md.file_exist(f)
+      md.generate_md5s(f)
+  else:
+    print "Error: Usage: %s [path/to/file1] [path/to/file2]... (etc.)" % sys.argv[0]

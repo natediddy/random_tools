@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+#
+# Backup/Restore APK's to & from your *nix machine 
+# nathanForbes
+#
+
+import sys, shutil, os
+from os.path import *
+from optparse import OptionParser
+
+sh = os.system
+b_dir = "app_backup"
+apr = "app-private"
+
+def backup():
+  mkdir = os.makedirs
+  if isdir(b_dir):
+    shutil.rmtree(b_dir)
+  mkdir(b_dir)
+  mkdir("%s/app" % (b_dir))
+  mkdir("%s/%s" % (b_dir, apr))
+  print "Attempting to backup apps from device...\n"
+  try:
+    sh("adb pull /data/app %s/app" % (b_dir))
+  except Exception, e:
+    print e
+    sys.exit(1)
+  try:
+    sh("adb pull /data/%s %s/%s" % (apr, b_dir, apr))
+  except Exception, e:
+    print e
+    sys.exit(1)
+
+def restore():
+  if not isdir(b_dir):
+    print "%s directory not found! Did you run the backup option? Or are you in a directory where you have ran it?" % (b_dir)
+    sys.exit(2)
+  else:
+    ol = os.listdir
+    for files in ol("%s/app" % (b_dir)):
+      if files is not None:
+        print "Restoring %s" % files
+        try:
+          sh("cd %s/app; adb install %s" % (b_dir, files))
+        except Exception, e:
+          print e
+          sys.exit(1)
+    for files in ol("%s/%s" % (b_dir, apr)):
+      if files is not None:
+        print "Restoring %s" % files
+        try:
+          sh("cd %s/%s; adb install %s" % (b_dir, apr, files))
+        except Exception, e:
+          print e
+          sys.exit(1)
+
+def usage_error():
+  print "AppTool: Error: Option provided is not a valid option"
+  print "Use --help for help"
+  sys.exit(1)
+
+def main():
+  apptool = OptionParser(usage="usage: %prog -m [ backup | restore ]")
+
+  apptool.add_option("-m", "--method", dest="method", help="Backup or Restore APK's from your Android device (backup | restore)")
+  (options, args) = apptool.parse_args()
+
+  op = options.method
+  b = "backup"
+  r = "restore"
+
+  if op == b:
+    return backup()
+
+  if op == r:
+    return restore()
+
+  if op != b:
+    return usage_error()
+
+  if op != r:
+    return usage_error()
+
+if __name__ == "__main__":
+  main()

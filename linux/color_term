@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# Uncomments "#force_color_prompt=yes" in ~/.bashrc
+# Ubuntu Lucid Lynx is the only distro this has been tested on
+# natediddy
+#
+
+A="#force_color_prompt=yes"
+B="force_color_prompt=yes"
+C=$HOME/.bashrc
+
+
+force_color() {
+	if grep "$A" "$C" >/dev/null
+	then
+		sed -i -e "s/$A/$B/" $C
+		if grep "$B" "$C" >/dev/null
+		then
+			echo "Force color terminal success"
+		else
+			echo "Force color terminal unsuccessful"
+		fi
+	fi
+}
+
+restore() {
+	if grep "$B" "$C" >/dev/null
+	then
+		sed -i -e "s/$B/$A/" $C
+		if grep "$A" "$C" >/dev/null
+		then
+			echo "Reverting color terminal success"
+		else
+			echo "Reverting color terminal unsuccessful"
+		fi
+	fi
+}
+
+case "$1" in
+	force-color)
+		force_color ;;
+	revert)
+		restore ;;
+	*)
+		echo "usage: $0 [ force-color | revert ]" ;;
+esac

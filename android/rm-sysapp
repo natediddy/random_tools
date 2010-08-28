@@ -1,0 +1,109 @@
+#!/system/bin/sh
+#
+# Remove system APK's
+# nathanForbes
+#
+
+MISSING_PKG_INFO=/sdcard/missing_pkg_info.txt
+
+header()
+{
+cat <<WARNING
+		
+		|----------------------------------------------------------------|
+		|--- If you are unsure about removing an app, DON'T REMOVE IT ---|
+		|----------------------------------------------------------------|
+
+WARNING
+
+	sleep 3
+}
+
+uninstaller()
+{
+	NAME=`basename $1 .apk`
+	PACKAGE_NAME="`pm list packages -f | grep "$1" | tr "=" " " | awk '{print $2}'`"
+
+	echo
+	echo -n "Remove $NAME? (y/n): "
+
+	read REMOVE
+
+	case "$REMOVE" in
+		y|Y|yes|YES)
+			echo "Removing $NAME..."
+			rm -rf $1
+			if [ "$PACKAGE_NAME" != "" ]
+			then
+				pm uninstall $PACKAGE_NAME
+			else
+				echo "$NAME" >>$MISSING_PKG_INFO
+			fi
+			;;
+		n|N|no|NO)
+			echo "Skipping $NAME, not removing..."
+			;;
+		*)
+			echo "'$REMOVE' not recognized..."
+			;;
+	esac
+}
+
+SYS_BLOCK=`mount | grep "/system" | awk '{print $1}'`
+
+if [ "$SYS_BLOCK" = "" ]
+then
+	echo "System mount block partition info was not found! Aborting..."
+	exit 1
+fi
+
+mount -o rw,remount -t yaffs2 $SYS_BLOCK /system >/dev/null
+
+rm -rf $MISSING_PKG_INFO
+
+if [ "$#" -eq 0 ]
+then
+	header
+	for SYS_APK in `find /system/app/ -name "*.apk"`
+	do
+		uninstaller $SYS_APK
+	done
+elif [ "$1" = "-h" -o "$1" = "--help" ]
+then
+	echo
+	echo "Usage: `basename $0` [APKNAME]"
+	echo "Where '[APKNAME]' is completely optional"
+	echo "Provide no arguments for one-at-a-time prompted system app removal"
+	echo
+	exit 0
+else
+	if [ "$#" -gt 0 ]
+	then
+		for SYS_APK in "$@"
+		do
+			if [ -e "/system/app/$SYS_APK" ]
+			then
+				uninstaller /system/app/$SYS_APK
+			else
+				echo "'$SYS_APK' does not exist"
+			fi
+		done
+	fi
+fi
+
+if [ -e "$MISSING_PKG_INFO" ]
+then
+	echo
+	echo "The following packages were not properly uninstalled due to lack of package name info:"
+	cat $MISSING_PKG_INFO
+	echo "Uninstall manually via 'Settings > Applications > Manage Applications'"
+	echo
+fi
+
+rm -rf $MISSING_PKG_INFO
+
+echo "Done"
+
+mount -o ro,remount -t yaffs2 $SYS_BLOCK /system >/dev/null
+
+exit 0;
