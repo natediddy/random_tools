@@ -4,82 +4,124 @@
 # nathanForbes
 #
 
-import sys, shutil, os
-from os.path import *
-from optparse import OptionParser
+import subprocess
+import os
+import sys
+import shutil
 
-sh = os.system
-b_dir = "app_backup"
-apr = "app-private"
+from os.path import isfile, isdir
+
+class ExternalError(RuntimeError):
+    pass
+
+def command(args, **kwargs):
+    """ Very useful function for creating
+        subprocess.Popen objects. Credit Google """
+    print "Running: ", " ".join(args)
+    return subprocess.Popen(args, **kwargs)
+
+home = os.getenv('HOME')
+bdir = "%s/app_backup" % (home)
+done_zip = "%s-app_backup" % (os.getlogin())
 
 def backup():
-  mkdir = os.makedirs
-  if isdir(b_dir):
-    shutil.rmtree(b_dir)
-  mkdir(b_dir)
-  mkdir("%s/app" % (b_dir))
-  mkdir("%s/%s" % (b_dir, apr))
-  print "Attempting to backup apps from device...\n"
-  try:
-    sh("adb pull /data/app %s/app" % (b_dir))
-  except Exception, e:
-    print e
-    sys.exit(1)
-  try:
-    sh("adb pull /data/%s %s/%s" % (apr, b_dir, apr))
-  except Exception, e:
-    print e
-    sys.exit(1)
+    if isdir(bdir):
+        shutil.rmtree(bdir)
+    os.makedirs("%s/app" % (bdir))
+    os.makedirs("%s/app-private" % (bdir))
+    cmd = ["adb", "pull", "/data/app", bdir+"/app"]
+    run = command(cmd, stdout=subprocess.PIPE)
+    run.communicate()
+    if run.returncode != 0:
+        raise ExternalError("Error: ADB pull fail")
+    cmd = ["adb", "pull", "/data/app-private", bdir+"/app-private"]
+    run2 = command(cmd, stdout=subprocess.PIPE)
+    run2.communicate()
+    if run2.returncode != 0:
+        raise ExternalError("Error: ADB pull fail")
+    os.chdir(bdir)
+    cmd = ["zip", "-r", done_zip, "app", "app-private"]
+    run3 = command(cmd, stdout=subprocess.PIPE)
+    run3.communicate()
+    if run3.returncode != 0:
+        raise ExternalError("Error: ZIP fail")
+    if isfile("%s.zip" % (done_zip)):
+        pass
+    else:
+        raise ExternalError("Error: ZIP fail")
+    applist = "     ".join(os.listdir("app"))
+    privlist = "     ".join(os.listdir("app-private"))
+    f = open("backup_info.txt", mode="w")
+    f.write("Thanx for using AppTool!\n\n"+"="*60+"\n\n"+applist+privlist+"\n\n"+"="*60+"\nAll backed up apps located in "+bdir+"/"+done_zip+".zip\n\n")
+    f.close()
+    shutil.rmtree("app")
+    shutil.rmtree("app-private")
+    print "Done backing up apps. Open %s/backup_info.txt for details" % bdir
+    sys.exit()
 
 def restore():
-  if not isdir(b_dir):
-    print "%s directory not found! Did you run the backup option? Or are you in a directory where you have ran it?" % (b_dir)
-    sys.exit(2)
-  else:
-    ol = os.listdir
-    for files in ol("%s/app" % (b_dir)):
-      if files is not None:
-        print "Restoring %s" % files
-        try:
-          sh("cd %s/app; adb install %s" % (b_dir, files))
-        except Exception, e:
-          print e
-          sys.exit(1)
-    for files in ol("%s/%s" % (b_dir, apr)):
-      if files is not None:
-        print "Restoring %s" % files
-        try:
-          sh("cd %s/%s; adb install %s" % (b_dir, apr, files))
-        except Exception, e:
-          print e
-          sys.exit(1)
+    if not isfile("%s/%s.zip" % (bdir, done_zip)):
+        print "Error: %s.zip does not exist. Did you run the backup option?" % done_zip
+        sys.exit(1)
+    else:
+        os.chdir(bdir)
+        if isdir("app"):
+            shutil.rmtree("app")
+        if isdir("app-private"):
+            shutil.rmtree("app-private")
+        cmd = ["unzip", "%s.zip" % done_zip]
+        run = command(cmd, stdout=subprocess.PIPE)
+        run.communicate()
+        if run.returncode != 0:
+            raise ExternalError("UNZIP fail")
+        if isdir("%s/app" % (bdir)):
+            for apk in os.listdir("%s/app" % (bdir)):
+                if apk is not None:
+                    apkname = os.path.basename(apk)
+                    cmd = ["adb", "shell", "pm", "install", "%s/app/%s" % (bdir, apkname)]
+                    run2 = command(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                    run2.communicate()
+        if isdir("%s/app-private" % (bdir)):
+            for apk in os.listdir("%s/app-private" % (bdir)):
+                if apk is not None:
+                    apkname = os.path.basename(apk)
+                    cmd = ["adb", "shell", "pm", "install", "%s/app-private/%s" % (bdir, apkname)]
+                    run3 = command(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                    run3.communicate()
+        os.chdir(bdir)
+        if isdir("app"):
+            shutil.rmtree("app")
+        if isdir("app-private"):
+            shutil.rmtree("app-private")
+    sys.exit()
 
-def usage_error():
-  print "AppTool: Error: Option provided is not a valid option"
-  print "Use --help for help"
-  sys.exit(1)
+def usage():
+    print "Python AppTool by natediddy"
+    print "\n"+"="*60
+    print "\t--backup\tBackup APK's to ~/app_backup"
+    print "\t--restore\tRestore APK's from ~/app_backup"
+    print "\t--help\t\tThis help"
+    print "="*60+"\n"
 
-def main():
-  apptool = OptionParser(usage="usage: %prog -m [ backup | restore ]")
-
-  apptool.add_option("-m", "--method", dest="method", help="Backup or Restore APK's from your Android device (backup | restore)")
-  (options, args) = apptool.parse_args()
-
-  op = options.method
-  b = "backup"
-  r = "restore"
-
-  if op == b:
-    return backup()
-
-  if op == r:
-    return restore()
-
-  if op != b:
-    return usage_error()
-
-  if op != r:
-    return usage_error()
-
-if __name__ == "__main__":
-  main()
+if __name__ == '__main__':
+    c = ["adb", "devices"]
+    dev = command(c, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    x = list(dev.communicate())
+    if len(x[0]) < 30:
+        raise ExternalError("Device not plugged in dumbass")
+    else:
+        if len(sys.argv) == 1:
+            print "\n%s: Error: Not enough arguments provided (try '--help')\n" % os.path.basename(sys.argv[0])
+            sys.exit(1)
+        elif len(sys.argv) > 2:
+            print "\n%s: Error: Too many arguments provided (try '--help')\n" % os.path.basename(sys.argv[0])
+            sys.exit(1)
+        else:
+            if sys.argv[1] == "--backup":
+                backup()
+            elif sys.argv[1] == "--restore":
+                restore()
+            elif sys.argv[1] == "--help":
+                usage()
+            else:
+                print "\n%s: Error: '%s' not an option (try '--help')\n" % (os.path.basename(sys.argv[0]), sys.argv[1])
