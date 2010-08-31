@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Uncomments "#force_color_prompt=yes" in ~/.bashrc
 # Ubuntu Lucid Lynx is the only distro this has been tested on
@@ -10,37 +10,45 @@ B="force_color_prompt=yes"
 C=$HOME/.bashrc
 
 
-force_color() {
+color_on()
+{
 	if grep "$A" "$C" >/dev/null
 	then
 		sed -i -e "s/$A/$B/" $C
 		if grep "$B" "$C" >/dev/null
 		then
-			echo "Force color terminal success"
+			echo "Color: ON"
+            echo "Run 'source ~/.bashrc' to take affect"
 		else
-			echo "Force color terminal unsuccessful"
+			echo "Fail"
 		fi
+    else
+        echo "Color already on"
 	fi
 }
 
-restore() {
+color_off()
+{
 	if grep "$B" "$C" >/dev/null
 	then
 		sed -i -e "s/$B/$A/" $C
 		if grep "$A" "$C" >/dev/null
 		then
-			echo "Reverting color terminal success"
+			echo "Color: OFF"
+            echo "Run 'source ~/.bashrc' to take affect"
 		else
-			echo "Reverting color terminal unsuccessful"
+			echo "Fail"
 		fi
+    else
+        echo "Color already off"
 	fi
 }
 
 case "$1" in
-	force-color)
-		force_color ;;
-	revert)
-		restore ;;
+	color-on)
+		color_on ;;
+	color-off)
+		color_off ;;
 	*)
-		echo "usage: $0 [ force-color | revert ]" ;;
+		echo "usage: $0 [ color-on | color-off ]" ;;
 esac

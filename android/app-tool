@@ -19,8 +19,8 @@ else
 	done
 fi
 
-SD_DIR=/sdcard/BACKED_UP_APPS
-DATA=/data/app
+SD_DIR="/sdcard/BACKED_UP_APPS"
+DATA="/data/app"
 DATE=`date +%b-%d-%I_%M%p`
 INFO_DOC=$SD_DIR/BACKUP_INFO.txt
 
@@ -132,7 +132,7 @@ restore_apps() {
 }
 
 usage() {
-	echo "Usage: $0 [OPTION] [INSTALL LOCATION]"
+	echo "Usage: `basename $0` [OPTION] [INSTALL LOCATION]"
 	echo "-b	Backup APPS to $SD_DIR"
 	echo "-r	Restore apps (install APPS from $SD_DIR)"
 	echo "		Also takes the arguments 'device' or 'sd'"
@@ -188,4 +188,4 @@ case "$1" in
 		;;
 esac
 
-exit 0
+exit 0;
