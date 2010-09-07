@@ -41,6 +41,11 @@ fi
 # If all went well above, attempt to sign
 for ZIP in "$@"
 do
+    if ! ( echo "$ZIP" | grep "\.zip$" ) >/dev/null
+    then
+        echo "$SELF: $ZIP is not a ZIP file"
+        exit 1
+    fi
 	if [ -e "$ZIP" ]
 	then
 		echo "$SELF: Signing package: $ZIP..."
