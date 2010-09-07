@@ -53,8 +53,9 @@ def backup():
         raise ExternalError("Error: ZIP fail")
     applist = "     ".join(os.listdir("app"))
     privlist = "     ".join(os.listdir("app-private"))
+    sep = os.linesep
     f = open("backup_info.txt", mode="w")
-    f.write("Thanx for using AppTool!\n\n"+"="*60+"\n\n"+applist+privlist+"\n\n"+"="*60+"\nAll backed up apps located in %s\n\n" % os.path.join(bdir, done_zip+'.zip'))
+    f.write("Thanx for using AppTool!%s%s"+"="*60+"%s%s"+applist+privlist+"%s%s"+"="*60+"%sAll backed up apps located in %s%s%s" % (sep, sep, sep, sep, sep, sep, sep, os.path.join(bdir, done_zip+'.zip'), sep, sep))
     f.close()
     shutil.rmtree("app")
     shutil.rmtree("app-private")
