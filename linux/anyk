@@ -19,20 +19,30 @@ def Run(args, **kwargs):
     print "Running:\t", " ".join(args)
     return subprocess.Popen(args, **kwargs)
 
-anyk_zimage = join(expanduser('~'), 'anykernel', 'kernel', 'zImage')
-anyk_wifi = join(expanduser('~'), 'anykernel', 'system', 'lib', 'modules', 'tiwlan_drv.ko')
+anyk_zimage = join(expanduser('~'), 'anykernel',
+                                    'kernel',
+                                    'zImage')
+
+anyk_wifi = join(expanduser('~'), 'anykernel',
+                                  'system',
+                                  'lib',
+                                  'modules',
+                                  'tiwlan_drv.ko')
 
 def Make_Zip(zimage, wifi):
 
     if not isdir(join(expanduser('~'), 'anykernel')):
-        cmd = ['git', 'clone',
-                'git://github.com/koush/AnyKernel.git',
-                join(expanduser('~'), 'anykernel')]
+        cmd = ['git',
+               'clone',
+               'git://github.com/koush/AnyKernel.git',
+               join(expanduser('~'), 'anykernel')]
         try:
-            ak = Run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            ak = Run(cmd,
+                     stdin=subprocess.PIPE,
+                     stdout=subprocess.PIPE)
             ak.communicate()
             if ak.returncode != 0:
-                raise ExternalFailure('--- git clone fail')
+                raise ExternalFailure('--> git clone fail')
         except OSError, e:
             print str(e)
 
@@ -51,13 +61,20 @@ def Make_Zip(zimage, wifi):
     except:
         pass
 
-    zip_cmd = ['zip', '-r', 'new_kernel', 'kernel', 'system', 'META-INF']
+    zip_cmd = ['zip',
+               '-r',
+               'new_kernel',
+               'kernel',
+               'system',
+               'META-INF']
 
     try:
-        zc = Run(zip_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        zc = Run(zip_cmd,
+                 stdin=subprocess.PIPE,
+                 stdout=subprocess.PIPE)
         zc.communicate()
         if zc.returncode != 0:
-            raise ExternalFailure('--- zip fail')
+            raise ExternalFailure('--> zip fail')
     except OSError, e:
         print str(e)
 
@@ -73,16 +90,24 @@ def Make_Zip(zimage, wifi):
         shutil.copy('new_kernel.zip', join(expanduser('~'), new_dir, new_zip))
 
     if isfile(join(expanduser('~'), new_dir, new_zip)):
-        print "New anykernel located at %s" % (join(expanduser('~'), new_dir,
-                                                                       new_zip))
+        print "New anykernel located at %s" % (join(expanduser('~'),
+                                                    new_dir,
+                                                    new_zip))
 
 def Make_Kernel(omap, pre, ti):
 
-    zi = join(expanduser(omap), 'arch', 'arm', 'boot', 'zImage')
-    wi = join(expanduser(ti), 'wilink_6_1', 'platforms', 'os', 'linux',
-                                                                'tiwlan_drv.ko')
+    zi = join(expanduser(omap), 'arch',
+                                'arm',
+                                'boot',
+                                'zImage')
 
-    if isfile(zi):os.remove(zi)
+    wi = join(expanduser(ti), 'wilink_6_1',
+                              'platforms',
+                              'os',
+                              'linux',
+                              'tiwlan_drv.ko')
+
+    if isfile(zi): os.remove(zi)
     if isfile(wi): os.remove(wi)
 
     os.chdir(expanduser(omap))
@@ -93,19 +118,21 @@ def Make_Kernel(omap, pre, ti):
 
     try:
         d = Run(['make', 'sholes_defconfig'],
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE)
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE)
         d.communicate()
         if d.returncode != 0:
-            raise ExternalFailure('--- make defconfig fail')
+            raise ExternalFailure('--> make defconfig fail')
     except OSError, e:
         print str(e)
 
     try:
-        k = Run(['make'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        k = Run(['make'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE)
         k.communicate()
         if k.returncode != 0:
-            raise ExternalFailure('--- make kernel fail')
+            raise ExternalFailure('--> make kernel fail')
     except OSError, e:
         print str(e)
 
@@ -124,10 +151,12 @@ def Make_Kernel(omap, pre, ti):
     os.putenv('KERNEL_DIR', '%s' % (expanduser(omap)))
 
     try:
-        t = Run(['make'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        t = Run(['make'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE)
         t.communicate()
         if t.returncode != 0:
-            raise ExternalFailure('--- make wifi module fail')
+            raise ExternalFailure('--> make wifi module fail')
     except OSError, e:
         print str(e)
 
@@ -151,8 +180,6 @@ def dir_check(path):
                 return True
             else:
                 return False
-        else:
-            return False
         return False
 
 def file_check(path):
@@ -167,8 +194,6 @@ def file_check(path):
                 return True
             else:
                 return False
-        else:
-            return False
         return False
 
 def main():
@@ -176,36 +201,41 @@ def main():
 --wifi=PATH} | {-k --omap=PATH --pre=PATH --ti=PATH}')
 
     zip_only_group = optparse.OptionGroup(parser, 'Package Anykernel zip')
-    zip_only_group.add_option('-z', '--zip-only', dest='zip_only',
-                                action='store_true',
-                                help='Only create an Anykernel zip package \
+    zip_only_group.add_option('-z', '--zip-only',
+                              dest='zip_only',
+                              action='store_true',
+                              help='Only create an Anykernel zip package \
 from specified paths')
-    zip_only_group.add_option('--zimage', dest='zimage_path',
-                                help='Provide absolute path to zImage file')
-    zip_only_group.add_option('--wifi', dest='wifi_path',
-                                help='Provide absolute path to wifi module file')
+    zip_only_group.add_option('--zimage',
+                              dest='zimage_path',
+                              help='Provide absolute path to zImage file')
+    zip_only_group.add_option('--wifi',
+                              dest='wifi_path',
+                              help='Provide absolute path to wifi module file')
     parser.add_option_group(zip_only_group)
 
     make_kernel_group = optparse.OptionGroup(parser, 'Compile new kernel, '
-                                                'Packages a new Anykernel zip')
+                                             'Packages a new Anykernel zip')
     make_kernel_group.add_option('-k', '--kernel-and-zip',
-                                    dest='kernel_and_zip',
-                                    action='store_true',
-                                    help='Compile new kernel from specified \
+                                 dest='kernel_and_zip',
+                                 action='store_true',
+                                 help='Compile new kernel from specified \
 omap, prebuilt, and ti directories')
-    make_kernel_group.add_option('--omap', dest='omap_path',
-                                    help='Full path to /omap directory')
-    make_kernel_group.add_option('--pre', dest='prebuilt_path',
-                                    help='Full path to /prebuilt directory')
-    make_kernel_group.add_option('--ti', dest='ti_path',
-                                    help='Full path to /ti directory')
+    make_kernel_group.add_option('--omap',
+                                 dest='omap_path',
+                                 help='Full path to /omap directory')
+    make_kernel_group.add_option('--pre',
+                                 dest='prebuilt_path',
+                                 help='Full path to /prebuilt directory')
+    make_kernel_group.add_option('--ti',
+                                 dest='ti_path',
+                                 help='Full path to /ti directory')
     parser.add_option_group(make_kernel_group)
 
-    parser.add_option('-s', '--store-paths', dest='store_paths',
-                        help='Store paths to text file to alleviate future \
-need to specify paths on command line')
-
     opts, args = parser.parse_args()
+
+    progname = basename(sys.argv[0])
+    err_msg = "%s: Error: please specify full path" % progname
 
     if opts.zip_only and opts.kernel_and_zip:
         parser.print_help()
@@ -214,44 +244,46 @@ need to specify paths on command line')
     if opts.zip_only:
         if opts.zimage_path:
             if not file_check(opts.zimage_path):
-                print "%s: Error: please specify full path" % basename(sys.argv[0])
+                print err_msg
                 sys.exit(1)
         else:
             parser.print_help()
             sys.exit(1)
         if opts.wifi_path:
             if not file_check(opts.wifi_path):
-                print "%s: Error: please specify full path" % basename(sys.argv[0])
+                print err_msg
                 sys.exit(1)
         else:
             parser.print_help()
             sys.exit(1)
-        return Make_Zip(opts.zimage_path, opts.wifi_path)
+        return Make_Zip(opts.zimage_path,
+                        opts.wifi_path)
 
     if opts.kernel_and_zip:
         if opts.omap_path:
             if not dir_check(opts.omap_path):
-                print "%s: Error: please specify full path" % basename(sys.argv[0])
+                print err_msg
                 sys.exit(1)
         else:
             parser.print_help()
             sys.exit(1)
         if opts.prebuilt_path:
             if not dir_check(opts.prebuilt_path):
-                print "%s: Error: please specify full path" % basename(sys.argv[0])
+                print err_msg
                 sys.exit(1)
         else:
             parser.print_help()
             sys.exit(1)
         if opts.ti_path:
             if not dir_check(opts.ti_path):
-                print "%s: Error: please specify full path" % basename(sys.argv[0])
+                print err_msg
                 sys.exit(1)
         else:
             parser.print_help()
             sys.exit(1)
-        return Make_Kernel(opts.omap_path, opts.prebuilt_path, opts.ti_path)
-        
+        return Make_Kernel(opts.omap_path,
+                           opts.prebuilt_path,
+                           opts.ti_path)
 
 if __name__ == '__main__':
     main()
