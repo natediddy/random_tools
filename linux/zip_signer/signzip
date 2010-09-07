@@ -43,8 +43,7 @@ for ZIP in "$@"
 do
 	if [ -e "$ZIP" ]
 	then
-		echo "\n"
-		echo "\n$SELF: Signing package: $ZIP...\n"
+		echo "$SELF: Signing package: $ZIP..."
 		mkdir -p $ROOT/signed
 		SIGNED_ZIP=$ROOT/signed/`basename $ZIP .zip`-signed.zip
 
@@ -53,11 +52,11 @@ do
 			-w $SIG_TOOLS/testkey.x509.pem $SIG_TOOLS/testkey.pk8 \
 			$ZIP $SIGNED_ZIP
 
-		if [ -e "$SIGNED_ZIP" ]
+		if [ "$?" -eq 0 ] && [ -e "$SIGNED_ZIP" ]
 		then
-			echo "\n$SELF: Looks like everything went well...\n$SELF: New signed zip located at $SIGNED_ZIP"
+			echo "$SELF: Looks like everything went well...\n$SELF: New signed zip located at $SIGNED_ZIP"
 		else
-			echo "\n$SELF: Something went wrong, exiting\n"
+			echo "$SELF: Something went wrong, exiting"
 			exit 1
 		fi
 	else
@@ -65,7 +64,5 @@ do
 		exit 1
 	fi
 done
-
-echo "\n\n"
 
 exit 0
