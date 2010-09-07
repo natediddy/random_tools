@@ -1,0 +1,6 @@
+#!/bin/bash
+
+MY_PASS="YOUR_SUDO_PASSWORD" # I recommend not to use this on a public/shared computer
+
+echo "$MY_PASS" | sudo -S apt-get update -y
+echo "$MY_PASS" | sudo -S apt-get upgrade -y
