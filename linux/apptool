@@ -42,6 +42,8 @@ def backup():
     if run2.returncode != 0:
         raise ExternalError("Error: ADB pull fail")
     os.chdir(bdir)
+
+    #TODO: use python's zipfile abilities for this, this kills portability
     cmd = ["zip", "-r", done_zip, "app", "app-private"]
     run3 = command(cmd, stdout=subprocess.PIPE)
     run3.communicate()
@@ -72,6 +74,8 @@ def restore():
             shutil.rmtree("app")
         if isdir("app-private"):
             shutil.rmtree("app-private")
+
+        #TODO: use python's zipfile abilities for this, this kills portability
         cmd = ["unzip", "%s.zip" % done_zip]
         run = command(cmd, stdout=subprocess.PIPE)
         run.communicate()
