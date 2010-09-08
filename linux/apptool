@@ -95,7 +95,7 @@ def restore():
                 for apk in os.listdir(os.path.join(bdir, 'app')):
                     if apk is not None:
                         apkname = os.path.basename(apk)
-                        cmd = ["adb", "shell", "pm", "install", os.path.join(bdir, 'app', apkname)]
+                        cmd = ["adb", "install", os.path.join(bdir, 'app', apkname)]
                         run = command(cmd)
                         run.communicate()
 
@@ -103,7 +103,7 @@ def restore():
                 for apk in os.listdir(os.path.join(bdir, 'APPS', 'app-private')):
                     if apk is not None:
                         apkname = os.path.basename(apk)
-                        cmd = ["adb", "shell", "pm", "install", os.path.join(bdir, 'app-private', apkname)]
+                        cmd = ["adb", "install", os.path.join(bdir, 'app-private', apkname)]
                         run = command(cmd)
                         run.communicate()
 
