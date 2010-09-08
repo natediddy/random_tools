@@ -1,6 +1,13 @@
 #
-# Backup/Restore APK's to & from your desktop machine 
+# Backup/Restore APK's to & from your desktop
 # nathanForbes
+#
+# Prereqs:
+# - Python interpreter executable located in your system's PATH
+# - ADB executable located in PATH
+#
+# Usage:
+#       python apptool.py [OPTION]
 #
 
 import os
@@ -38,9 +45,12 @@ def backup():
         if run.returncode != 0:
             raise ExternalError("Error: ADB pull fail")
 
-        cmd = ["adb", "pull",
+        cmd = ["adb",
+               "pull",
                "/data/app-private",
-               os.path.join(bdir, 'APPS', 'app-private')]
+               os.path.join(bdir,
+                            'APPS',
+                            'app-private')]
         run = command(cmd, stdout=subprocess.PIPE)
         run.communicate()
         if run.returncode != 0:
@@ -57,9 +67,9 @@ def backup():
                 z.write(abspath, arcpath)
         z.close()
 
-        applist = "     ".join(os.listdir(os.path.join('APPS', 'app')))
-        privlist = "     ".join(os.listdir(os.path.join('APPS', 'app-private')))
         sep = os.linesep
+        applist = sep.join(os.listdir(os.path.join('APPS', 'app')))
+        privlist = sep.join(os.listdir(os.path.join('APPS', 'app-private')))
 
         print "Generating info text..."
         f = open("backup_info.txt", mode="w")
@@ -146,7 +156,7 @@ def devices():
         return True
 
 def main():
-    p = optparse.OptionParser(usage='usage: %prog {--backup | --restore}')
+    p = optparse.OptionParser(usage='usage: python %prog [OPTION]')
     p.add_option('-b', '--backup', dest='backup_apps', action='store_true',
                              help='Backup applications')
     p.add_option('-r', '--restore', dest='restore_apps', action='store_true',
