@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 #
 # Backup/Restore APK's to & from your desktop machine 
 # nathanForbes
 #
 
-import subprocess
 import os
+import subprocess
 import sys
 import shutil
 import optparse
@@ -154,8 +153,11 @@ def main():
         if devices():
             if opts.backup_apps:
                 return backup()
-            if opts.restore_apps:
+            elif opts.restore_apps:
                 return restore()
+            else:
+                p.print_help()
+                sys.exit(1)
         else:
             raise ExternalError("Device not plugged in")
     else:
