@@ -30,6 +30,7 @@ home = os.path.expanduser('~')
 bdir = os.path.join(home, 'app_backup')
 zipname = "%s-app_backup" % (pwd.getpwuid(os.getuid()).pw_name)
 done_zip = zipname + '.zip'
+sep = os.linesep
 
 def backup():
     try:
@@ -67,7 +68,6 @@ def backup():
                 z.write(abspath, arcpath)
         z.close()
 
-        sep = os.linesep
         applist = sep.join(os.listdir(os.path.join('APPS', 'app')))
         privlist = sep.join(os.listdir(os.path.join('APPS', 'app-private')))
 
@@ -84,7 +84,7 @@ def backup():
                % os.path.join(bdir, 'backup_info.txt')
         sys.exit()
     except KeyboardInterrupt:
-        print "\nAborting..."
+        print sep+"Aborting..."
         if os.path.isdir(bdir):
             shutil.rmtree(bdir)
 
@@ -133,7 +133,7 @@ def restore():
 
             sys.exit()
     except KeyboardInterrupt:
-        print "\nAborting..."
+        print sep+"Aborting..."
         if os.path.isdir(os.path.join(bdir, 'app')):
             shutil.rmtree(os.path.join(bdir, 'app'))
         if os.path.isdir(os.path.join(bdir, 'app-private')):
