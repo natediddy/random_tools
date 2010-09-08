@@ -4,32 +4,29 @@
 #
 
 import os
-import subprocess
+import pwd
 import sys
 import shutil
-import optparse
 import zipfile
-
-from os.path import isfile, isdir
+import optparse
+import subprocess
 
 class ExternalError(RuntimeError):
     pass
 
 def command(args, v=True, **kwargs):
-    """ Very useful function for creating
-        subprocess.Popen objects. Credit Google """
     if v:
         print "Running: ", " ".join(args)
     return subprocess.Popen(args, **kwargs)
 
 home = os.path.expanduser('~')
 bdir = os.path.join(home, 'app_backup')
-zipname = "%s-app_backup" % (os.getlogin())
+zipname = "%s-app_backup" % (pwd.getpwuid(os.getuid()).pw_name)
 done_zip = zipname + '.zip'
 
 def backup():
     try:
-        if isdir(bdir):
+        if os.path.isdir(bdir):
             shutil.rmtree(bdir)
 
         os.makedirs(os.path.join(bdir, 'APPS', 'app'))
@@ -41,7 +38,9 @@ def backup():
         if run.returncode != 0:
             raise ExternalError("Error: ADB pull fail")
 
-        cmd = ["adb", "pull", "/data/app-private", os.path.join(bdir, 'APPS', 'app-private')]
+        cmd = ["adb", "pull",
+               "/data/app-private",
+               os.path.join(bdir, 'APPS', 'app-private')]
         run = command(cmd, stdout=subprocess.PIPE)
         run.communicate()
         if run.returncode != 0:
@@ -64,61 +63,69 @@ def backup():
 
         print "Generating info text..."
         f = open("backup_info.txt", mode="w")
-        f.write("Thanx for using AppTool!"+sep+sep+"="*60+sep+sep+applist+privlist+sep+sep+"="*60+sep+"All backed up apps located in "+os.path.join(bdir, done_zip)+sep+sep)
+        f.write("Thanx for using AppTool!"+sep+sep+"="*60+sep+sep+
+                applist+privlist+sep+sep+"="*60+sep+"All backed up apps "
+                "located in "+os.path.join(bdir, done_zip)+sep+sep)
         f.close()
 
         shutil.rmtree("APPS")
-        print "Done backing up apps. Open %s for details" % os.path.join(bdir, 'backup_info.txt')
+        print "Done backing up apps. Open %s for details" \
+               % os.path.join(bdir, 'backup_info.txt')
         sys.exit()
     except KeyboardInterrupt:
         print "\nAborting..."
-        if isdir(bdir):
+        if os.path.isdir(bdir):
             shutil.rmtree(bdir)
 
 def restore():
     try:
-        if not isfile(os.path.join(bdir, done_zip)):
-            print "Error: %s does not exist. Did you run the backup option?" % done_zip
+        if not os.path.isfile(os.path.join(bdir, done_zip)):
+            print "Error: %s does not exist. Did you run the backup option?" \
+                   % done_zip
             sys.exit(1)
         else:
             os.chdir(bdir)
 
-            if isdir("APPS"):
+            if os.path.isdir("APPS"):
                 shutil.rmtree('APPS')
 
             ex = zipfile.ZipFile(done_zip, 'r')
             ex.extractall()
             ex.close()
 
-            if isdir(os.path.join(bdir, 'app')):
+            if os.path.isdir(os.path.join(bdir, 'app')):
                 for apk in os.listdir(os.path.join(bdir, 'app')):
                     if apk is not None:
                         apkname = os.path.basename(apk)
-                        cmd = ["adb", "install", os.path.join(bdir, 'app', apkname)]
+                        cmd = ["adb",
+                               "install",
+                               os.path.join(bdir, 'app', apkname)]
                         run = command(cmd)
                         run.communicate()
 
-            if isdir(os.path.join(bdir, 'APPS', 'app-private')):
-                for apk in os.listdir(os.path.join(bdir, 'APPS', 'app-private')):
+            if os.path.isdir(os.path.join(bdir, 'app-private')):
+                for apk in os.listdir(os.path.join(bdir, 'app-private')):
                     if apk is not None:
                         apkname = os.path.basename(apk)
-                        cmd = ["adb", "install", os.path.join(bdir, 'app-private', apkname)]
+                        cmd = ["adb",
+                               "install",
+                               os.path.join(bdir, 'app-private', apkname)]
                         run = command(cmd)
                         run.communicate()
 
             os.chdir(bdir)
 
-            if isdir("app"):
+            if os.path.isdir("app"):
                 shutil.rmtree('app')
-            if isdir('app-private'):
+            if os.path.isdir('app-private'):
                 shutil.rmtree('app-private')
 
             sys.exit()
     except KeyboardInterrupt:
         print "\nAborting..."
-        if isdir(os.path.join(bdir, 'app')):
+        if os.path.isdir(os.path.join(bdir, 'app')):
             shutil.rmtree(os.path.join(bdir, 'app'))
-        if isdir(os.path.join(bdir, 'app-private')):
+        if os.path.isdir(os.path.join(bdir, 'app-private')):
             shutil.rmtree(os.path.join(bdir, 'app-private'))
 
 def adb_check():
