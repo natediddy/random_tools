@@ -74,7 +74,8 @@ def backup():
         print "Generating info text..."
         f = open("backup_info.txt", mode="w")
         f.write("Thanx for using AppTool!"+sep+sep+"="*60+sep+sep+
-                applist+privlist+sep+sep+"="*60+sep+"All backed up apps "
+                "Apps:"+sep+applist+sep+sep+"Private apps:"+sep+
+                privlist+sep+sep+"="*60+sep+"All backed up apps "
                 "located in "+os.path.join(bdir, done_zip)+sep+sep)
         f.close()
 
