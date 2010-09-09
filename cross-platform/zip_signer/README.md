@@ -10,13 +10,14 @@ After you have extracted a signed ZIP, edited contents, and rezipped, then you c
 
 As many ZIPs as you want to provide on the command line can be signed at once, for example, this is how SignZip could be used to sign 3 separate ZIPs at once:
 	cd <DIRECTORY/OF/THIS/TOOL>
-	./signzip ~/Desktop/<NAME OF FILE>.zip ~/Downloads/<NAME OF FILE>.zip ~/android/roms/<NAME OF FILE>.zip
+	python signzip.py ~/Desktop/<NAME OF FILE>.zip ~/Downloads/<NAME OF FILE>.zip ~/android/roms/<NAME OF FILE>.zip
 If all went well, the 3 new signed zips will be located in DIRECTORY/OF/THIS/TOOL.
 
 For help:
 	cd <DIRECTORY/OF/THIS/TOOL>
-	./signzip -h (or --help)
+	python signzip.py --help
 
-Please keep the *signzip* and */tools* directory in the SAME folder (which would be DIRECTORY/OF/THIS/TOOL in above examples). 
+Please keep the *signzip.py* and */tools* directory in the SAME folder (which would be DIRECTORY/OF/THIS/TOOL in above examples). 
 
 This uses aosp signing keys (same keys CyanogenMod is signed with) 
+Should work on Linux and Windows
