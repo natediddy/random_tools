@@ -104,7 +104,21 @@ fi
 
 export PATH=/home/nathan/.android-sdk/tools:$PATH
 
-alias attach='screen -raAd'  # for irssi
+alias attach='screen -raAd'  # for screen
+
+function google()
+{
+    local GOOGLE="http://www.google.com/search?sourceid=chrome&ie=UTF-8&q="
+
+    if [ "$#" -eq 0 ]
+    then
+        echo "Provide search terms for Google"
+        return 1
+    else
+        local SEARCH="`echo $@ | tr " " "+"`"
+        google-chrome "$GOOGLE$SEARCH" >/dev/null
+    fi  
+}
 
 function url()
 {
@@ -121,13 +135,13 @@ function url()
                 echo "Provide url for incognito"
                 return 1
             else
-                google-chrome --incognito "$URL"
+                google-chrome --incognito "$URL" >/dev/null
             fi
         else
             if [ "$1" != "" ]
             then
                 local URL="$1"
-                google-chrome "$URL"
+                google-chrome "$URL" >/dev/null
             fi
         fi
     fi
@@ -213,8 +227,8 @@ function calc()
 function chrome()
 {
     case $1 in
-    	-i) google-chrome --incognito ;;
-    	 *) google-chrome ;;
+    	-i) google-chrome --incognito >/dev/null ;;
+    	 *) google-chrome >/dev/null ;;
     esac
 }
 
