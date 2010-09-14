@@ -20,6 +20,9 @@ def get_link(file_path):
     except ValueError:
         print "%s not a Dropbox file" % file_path
         sys.exit(1)
+    if not os.path.exists(os.path.expanduser(file_path)):
+        print "%s not a valid path or does not exist" % file_path
+        sys.exit(1)
     cmd = ['dropbox', 'puburl', os.path.expanduser(file_path)]
     run = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     new = list(run.communicate())
