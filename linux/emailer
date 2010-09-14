@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+#
+# Send Dropbox link via Gmail from command-line
+#
+# Example:
+# emailer -e -f myemail@gmail.com -t recipient@gmail.com -p mygmailpassword -l ~/Dropbox/Public/somefile.zip
+#
+# nathanForbes
+#
+
+import os
+import sys
+import smtplib
+import optparse
+import subprocess
+
+def get_link(file_path):
+    try:
+        file_path.index('Dropbox')
+    except ValueError:
+        print "%s not a Dropbox file" % file_path
+        sys.exit(1)
+    cmd = ['dropbox', 'puburl', os.path.expanduser(file_path)]
+    run = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    new = list(run.communicate())
+    link = new[0].replace('\n', '')
+    return link
+
+def send_email(f, t, p, file_path):
+    msg = 'Greetings,\n' + get_link(file_path)
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login(f, p)
+    server.sendmail(f, t, msg)
+    server.quit()
+    print "Message sent to %s" % t
+
+def main():
+    p = optparse.OptionParser()
+    p.add_option('-e', '--email',
+                action='store_true',
+                dest='send_email',
+                help='Send email')
+    p.add_option('-f',
+                dest='from_addr',
+                help='From address')
+    p.add_option('-t',
+                dest='to_addr',
+                help='To address')
+    p.add_option('-p',
+                dest='password',
+                help='Gmail password')
+    p.add_option('-l',
+                dest='db_file_path',
+                help='Path to Dropbox file')
+    (opts, args) = p.parse_args()
+
+    if opts.send_email:
+        if opts.from_addr:
+            if opts.to_addr:
+                if opts.password:
+                    if opts.db_file_path:
+                        return send_email(opts.from_addr,
+                                          opts.to_addr,
+                                          opts.password,
+                                          opts.db_file_path)
+    p.print_help()
+    sys.exit()
+
+if __name__ == '__main__':
+    main()
