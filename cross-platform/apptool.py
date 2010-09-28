@@ -40,18 +40,32 @@ def backup():
         os.makedirs(os.path.join(bdir, 'APPS', 'app'))
         os.makedirs(os.path.join(bdir, 'APPS', 'app-private'))
 
-        cmd = ["adb", "pull", "/data/app", os.path.join(bdir, 'APPS', 'app')]
+        cmd = [
+            "adb",
+            "pull",
+            "/data/app",
+            os.path.join(
+                    bdir,
+                    'APPS',
+                    'app'
+                  )
+          ]
+
         run = command(cmd, stdout=subprocess.PIPE)
         run.communicate()
         if run.returncode != 0:
             raise ExternalError("Error: ADB pull fail")
 
-        cmd = ["adb",
-               "pull",
-               "/data/app-private",
-               os.path.join(bdir,
-                            'APPS',
-                            'app-private')]
+        cmd = [
+            "adb",
+            "pull",
+            "/data/app-private",
+            os.path.join(
+                    bdir,
+                    'APPS',
+                    'app-private'
+                  )
+          ]
         run = command(cmd, stdout=subprocess.PIPE)
         run.communicate()
         if run.returncode != 0:
@@ -73,17 +87,22 @@ def backup():
 
         print "Generating info text..."
         f = open("backup_info.txt", mode="w")
-        f.write("Thanx for using AppTool!"+sep+sep+"="*60+sep+sep+
-                "Apps:"+sep+applist+sep+sep+"Private apps:"+sep+
-                privlist+sep+sep+"="*60+sep+"All backed up apps "
-                "located in "+os.path.join(bdir, done_zip)+sep+sep)
+        f.write(
+            "Thanx for using AppTool!"
+            +sep+sep+"="*60+sep+sep
+            +"Apps:"+sep+applist+sep+sep
+            +"Private apps:"+sep+privlist
+            +sep+sep+"="*60+sep
+            +"All backed up apps located in "
+            +os.path.join(bdir, done_zip)+sep+sep
+          )
         f.close()
 
         shutil.rmtree("APPS")
         print "Done backing up apps. Open %s for details" \
                % os.path.join(bdir, 'backup_info.txt')
-        sys.exit()
-    except KeyboardInterrupt:
+        return
+    except:
         print sep+"Aborting..."
         if os.path.isdir(bdir):
             shutil.rmtree(bdir)
@@ -93,7 +112,7 @@ def restore():
         if not os.path.isfile(os.path.join(bdir, done_zip)):
             print "Error: %s does not exist. Did you run the backup option?" \
                    % done_zip
-            sys.exit(1)
+            return 1
         else:
             os.chdir(bdir)
 
@@ -108,9 +127,11 @@ def restore():
                 for apk in os.listdir(os.path.join(bdir, 'app')):
                     if apk is not None:
                         apkname = os.path.basename(apk)
-                        cmd = ["adb",
-                               "install",
-                               os.path.join(bdir, 'app', apkname)]
+                        cmd = [
+                            "adb",
+                            "install",
+                            os.path.join(bdir, 'app', apkname)
+                           ]
                         run = command(cmd)
                         run.communicate()
 
@@ -118,21 +139,19 @@ def restore():
                 for apk in os.listdir(os.path.join(bdir, 'app-private')):
                     if apk is not None:
                         apkname = os.path.basename(apk)
-                        cmd = ["adb",
-                               "install",
-                               os.path.join(bdir, 'app-private', apkname)]
+                        cmd = [
+                            "adb",
+                            "install",
+                            os.path.join(bdir, 'app-private', apkname)
+                           ]
                         run = command(cmd)
                         run.communicate()
-
             os.chdir(bdir)
-
             if os.path.isdir("app"):
                 shutil.rmtree('app')
             if os.path.isdir('app-private'):
                 shutil.rmtree('app-private')
-
-            sys.exit()
-    except KeyboardInterrupt:
+    except:
         print sep+"Aborting..."
         if os.path.isdir(os.path.join(bdir, 'app')):
             shutil.rmtree(os.path.join(bdir, 'app'))
@@ -149,7 +168,12 @@ def adb_check():
 
 def devices():
     c = ["adb", "devices"]
-    dev = command(c, v=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    dev = command(
+            c,
+            v=False,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE
+        )
     x = list(dev.communicate())
     if len(x[0]) < 30:
         return False
@@ -158,15 +182,24 @@ def devices():
 
 def main():
     p = optparse.OptionParser(usage='usage: python %prog [OPTION]')
-    p.add_option('-b', '--backup', dest='backup_apps', action='store_true',
-                             help='Backup applications')
-    p.add_option('-r', '--restore', dest='restore_apps', action='store_true',
-                             help='Restore applications')
+    p.add_option(
+            '-b',
+            '--backup',
+            dest='backup_apps',
+            action='store_true',
+            help='Backup applications'
+          )
+    p.add_option(
+            '-r',
+            '--restore',
+            dest='restore_apps',
+            action='store_true',
+            help='Restore applications'
+          )
     opts, args = p.parse_args()
 
     if opts.backup_apps and opts.restore_apps:
-        p.print_help()
-        sys.exit(1)
+        return p.print_help()
     if adb_check():
         if devices():
             if opts.backup_apps:
@@ -174,8 +207,7 @@ def main():
             elif opts.restore_apps:
                 return restore()
             else:
-                p.print_help()
-                sys.exit(1)
+                return p.print_help()
         else:
             raise ExternalError("Device not plugged in")
     else:
