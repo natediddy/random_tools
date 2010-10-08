@@ -4,7 +4,7 @@
 # nathanForbes
 #
 
-MISSING_PKG_INFO=/sdcard/missing_pkg_info.txt
+MISSING_PKG_INFO="/sdcard/missing_pkg_info.txt"
 
 header()
 {
@@ -16,12 +16,13 @@ cat <<WARNING
 
 WARNING
 
-	sleep 3
+	echo -n "Press any key to continue... "
+  read BLAH
 }
 
 uninstaller()
 {
-	NAME=`basename $1 .apk`
+	NAME="`basename $1 .apk`"
 	PACKAGE_NAME="`pm list packages -f | grep "$1" | tr "=" " " | awk '{print $2}'`"
 
 	echo
@@ -49,15 +50,13 @@ uninstaller()
 	esac
 }
 
-SYS_BLOCK=`mount | grep "/system" | awk '{print $1}'`
-
-if [ "$SYS_BLOCK" = "" ]
+if ! ( cat /system/xbin/busybox )
 then
-	echo "System mount block partition info was not found! Aborting..."
-	exit 1
+  echo "Busybox not detected, aborting..."
+  exit 1
 fi
 
-mount -o rw,remount -t yaffs2 $SYS_BLOCK /system >/dev/null
+mount -o rw,remount /system >/dev/null
 
 rm -rf $MISSING_PKG_INFO
 
@@ -104,6 +103,6 @@ rm -rf $MISSING_PKG_INFO
 
 echo "Done"
 
-mount -o ro,remount -t yaffs2 $SYS_BLOCK /system >/dev/null
+mount -o ro,remount /system >/dev/null
 
 exit 0;
