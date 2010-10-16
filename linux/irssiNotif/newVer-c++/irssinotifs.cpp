@@ -133,17 +133,20 @@ int main(void)
     j->fnLog = j->irssipath + "/fnotify";
     j->fnLogAll = j->irssipath + "/fnotify.log.all";
 
-    if (!isFnotify())
+	if (!existPath((char*)j->irssipath.c_str())) {
+		cout << "Irssi config directory not located" << endl;
+		return 1;
+	}
+
+	if (!isFnotify())
         return 1;
 
-    char* FnLog = (char*)j->fnLog.c_str();
-
     while (true) {
-        if (existFile(j->fnLog)) {
+        if (existFile(j->fnLog) == true) {
             showTimeAndDate();
             displayNotifications(j->fnLog);
             refreshLog(j->fnLog, j->fnLogAll);
-            remove(FnLog);
+            remove((char*)j->fnLog.c_str());
         }
         sleep(300);
     }
