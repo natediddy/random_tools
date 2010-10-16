@@ -42,17 +42,17 @@ struct Vars {
 
 struct Vars pa, pb;
 
-bool existPath(const char* p)
+int existPath(const char* p)
 {
     int ret = chdir(p);
  
     if (ret != 0)
-        return false;
+        return 1;
      
-    return true;
+    return 0;
 }
 
-bool existFile(string filename)
+int existFile(string filename)
 {   
     ifstream c;
      
@@ -60,12 +60,12 @@ bool existFile(string filename)
     c.close();
     
     if (c.fail())
-        return false;
+        return 1;
 
-    return true;
+    return 0;
 }
 
-bool isFnotify(void)
+int isFnotify(void)
 {
     struct Vars *i = &pa;
 
@@ -80,11 +80,11 @@ bool isFnotify(void)
             cout << "To obtain a copy, try something like:" << endl;
             cout << "\twget http://www.leemhuis.info/files/fnotify/fnotify -O "
                  << i->fnTwo << endl;
-            return false;
+            return 1;
         }
     }
  
-    return true;
+    return 0;
 }
 
 void showTimeAndDate(void)
@@ -133,16 +133,16 @@ int main(void)
     j->fnLog = j->irssipath + "/fnotify";
     j->fnLogAll = j->irssipath + "/fnotify.log.all";
 
-	if (!existPath((char*)j->irssipath.c_str())) {
+	if (0 != existPath((char*)j->irssipath.c_str())) {
 		cout << "Irssi config directory not located" << endl;
 		return 1;
 	}
 
-	if (!isFnotify())
+	if (0 != isFnotify())
         return 1;
 
     while (true) {
-        if (existFile(j->fnLog) == true) {
+        if (existFile(j->fnLog) == 0) {
             showTimeAndDate();
             displayNotifications(j->fnLog);
             refreshLog(j->fnLog, j->fnLogAll);
