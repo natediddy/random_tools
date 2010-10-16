@@ -108,7 +108,7 @@ void displayNotifications(string fn)
         ln.push_back(Out);
     }
 
-    for (int i = 0; i <= ln.size(); i++) {
+    for (int i = 0; i < ln.size(); i++) {
         cout << i << ") => ! => " << ln[i] << endl;
     }
 }
