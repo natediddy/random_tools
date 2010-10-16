@@ -46,8 +46,9 @@ int existPath(const char* p)
 {
     int ret = chdir(p);
  
-    if (ret != 0)
+    if (ret != 0) {
         return 1;
+	}
      
     return 0;
 }
@@ -59,8 +60,9 @@ int existFile(string filename)
     c.open(filename.c_str(), ifstream::in);
     c.close();
     
-    if (c.fail())
+    if (c.fail()) {
         return 1;
+	}
 
     return 0;
 }
@@ -138,8 +140,9 @@ int main(void)
 		return 1;
 	}
 
-	if (0 != isFnotify())
+	if (0 != isFnotify()) {
         return 1;
+	}
 
     while (true) {
         if (existFile(j->fnLog) == 0) {
