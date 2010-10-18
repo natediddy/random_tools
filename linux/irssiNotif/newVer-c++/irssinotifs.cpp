@@ -88,7 +88,7 @@ void showTimeAndDate(void)
     cout << ctime(&t) << endl;
 }
 
-void displayNotifications(string fn)
+void displayNotifications(string fn, int n)
 {
     char* filename = (char*)fn.c_str();
     ifstream In(filename);
@@ -99,9 +99,9 @@ void displayNotifications(string fn)
         ln.push_back(Out);
     }
 
-    for (int i = 1; i < ln.size(); i++) {
-        cout << i << ") => ! => " << ln[i] << endl;
-    }
+	for (int i = 0; i <= ln.size(); i++) {
+		cout << n << ") => ! => " << ln[i] << endl;
+	}
 }
 
 void refreshLog(string x, string y)
@@ -135,10 +135,12 @@ int main(void)
         return 1;
 	}
 
+	int n = 0;
+
     while (true) {
         if (existFile(j->fnLog) == 0) {
             showTimeAndDate();
-            displayNotifications(j->fnLog);
+			displayNotifications(j->fnLog, n++);
             refreshLog(j->fnLog, j->fnLogAll);
             remove((char*)j->fnLog.c_str());
         }
