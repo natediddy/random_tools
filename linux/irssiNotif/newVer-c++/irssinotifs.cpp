@@ -100,7 +100,7 @@ void displayNotifications(string fn, int n)
     }
 
 	for (int i = 0; i <= ln.size(); i++) {
-		cout << n << ") => ! => " << ln[i] << endl;
+		cout << (char)n << ") => ! => " << ln[i] << endl;
 	}
 }
 
