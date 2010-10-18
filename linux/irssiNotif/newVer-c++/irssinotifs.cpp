@@ -45,12 +45,7 @@ struct Vars pa, pb;
 int existPath(const char* p)
 {
     int ret = chdir(p);
- 
-    if (ret != 0) {
-        return 1;
-	}
-     
-    return 0;
+    return (ret == 0 ? 0 : 1);
 }
 
 int existFile(string filename)
@@ -60,11 +55,7 @@ int existFile(string filename)
     c.open(filename.c_str(), ifstream::in);
     c.close();
     
-    if (c.fail()) {
-        return 1;
-	}
-
-    return 0;
+    return (c.fail() ? 1 : 0);
 }
 
 int isFnotify(void)
@@ -108,7 +99,7 @@ void displayNotifications(string fn)
         ln.push_back(Out);
     }
 
-    for (int i = 0; i < ln.size(); i++) {
+    for (int i = 1; i < ln.size(); i++) {
         cout << i << ") => ! => " << ln[i] << endl;
     }
 }
