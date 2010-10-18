@@ -10,6 +10,7 @@ LDFLAGS=
 SOURCES=irssinotifs.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=irssinotifs
+hide := @  # trick I found from Android build system
 
 all: $(SOURCES) $(EXECUTABLE)
 
@@ -20,4 +21,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf *.o $(EXECUTABLE)
+	$(hide) rm -rf *.o $(EXECUTABLE) 
