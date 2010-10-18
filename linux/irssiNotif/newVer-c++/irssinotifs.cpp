@@ -67,8 +67,8 @@ int isFnotify(void)
     i->fnOne = i->irssipath + "/scripts/fnotify.pl";
     i->fnTwo = i->irssipath + "/scripts/autorun/fnotify.pl";
 
-    if (!existFile(i->fnOne)) {
-        if (!existFile(i->fnTwo)) {
+    if (existFile(i->fnOne) != 0) {
+        if (existFile(i->fnTwo) != 0) {
             cout << "Fnotify script not found in Irssi scripts directory!" << endl;
             cout << "To obtain a copy, try something like:" << endl;
             cout << "\twget http://www.leemhuis.info/files/fnotify/fnotify -O "
