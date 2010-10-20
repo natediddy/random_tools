@@ -19,11 +19,15 @@
 # then execute this script on the newly compiled <appname>-unsigned.apk
 # (assumes you're in the directory containing the unsigned apk)
 #
+# Usage:
+# 		signapk <NameOfApp>-unsigned.apk ~/<path/to/your/key>.keystore
+#
 
 err() { local e=$1 ; shift ; echo "$e" ; exit 1 ; }
 
 APK=$1
-KEY=$2
+KEY=$2   # <- If you use the same key a lot, change `$2' to be the path to your key you use,
+				 # 		then you only have to provide 1 argument on the command line (the name of the app)
 
 [ ! $APK ] && err "APK name not provided"
 [ ! $KEY ] && err "Must provide path to key as 2nd arg"
