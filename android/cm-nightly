@@ -5,11 +5,10 @@
 #
 
 # detect busybox without using busybox...
-if ! ( cat /system/xbin/busybox &> /dev/null )
-then
+! ( cat /system/xbin/busybox &> /dev/null ) && {
   echo -ne "==> ERROR: Busybox not found... Please install\n"
   exit 2
-fi
+}
 
 # just in case these aren't in /system/etc/bash/bashrc
 alias awk='busybox awk'
@@ -60,19 +59,33 @@ parseNightly()
 {
   local device=$1
   local url="http://mirror.teamdouche.net/?device=${device}"
-  [[ ! "$EXTERNAL_STORAGE" ]] && err "Could not detect External Storage location"
-  [[ -d "$workdir" ]] && rm -rf $workdir
+
+  [[ ! "$EXTERNAL_STORAGE" ]] && {
+		err "Could not detect External Storage location"
+	}
+
+  [[ -d "$workdir" ]] && {
+		rm -rf $workdir
+	}
+
   mkdir $workdir
   msg "Working... Please wait"
   local index="$workdir/index"
   wget -q $url -O $index
-  (( $? )) && err "Problem parsing URL"
+
+  (( $? )) && {
+		err "Problem parsing URL"
+	}
+
   local temp="$workdir/tmp.files"
+
   awk -F'[<>]' '{for(x=1;x<=NF;x++) if($x ~ /.zip$/) print $x}' $index > $temp
-  local pattern="cm_${device}_full"
+
+	local pattern="cm_${device}_full"
   local zip
   local buildno
   local builds=()
+
   # insert each $buildno into $builds array, i.e builds=( a b c d e )
   for zip in $( grep "$pattern" $temp )
   do
@@ -80,19 +93,20 @@ parseNightly()
     buildno=$( echo "$zip" | tr "-" " " | awk '{print $2}' | tr "." " " | awk '{print $1}' )
     builds+=( $buildno )
   done
+
   local num
   local file
+
   for num in ${builds[@]}
   do
-    if [ ! -f "$EXTERNAL_STORAGE/$pattern-$num.zip" ]
-    then
+    [ ! -f "$EXTERNAL_STORAGE/$pattern-$num.zip" ] && {
       msg "\`$pattern-$num.zip' is available"
       question "Download now? [y/N]"
       read download
       case "$download" in
         Y*|y*) file="$pattern-$num.zip"; break ;;
       esac
-    else
+		} || {
       msg "\`$pattern-$num.zip' exists on $EXTERNAL_STORAGE"
       question "Overwrite existing file? [y/N]"
       read overwrite
@@ -104,74 +118,97 @@ parseNightly()
       case "$cont" in
         N*|n*) break ;;
       esac
-    fi
+		}
   done
-  if [ ! "$file" ]
-  then
+
+  [ ! "$file" ] && {
     msg "Not downloading any nightlies..."
-  else
+	} || {
     local nightlyDownload="http://mirror.teamdouche.net/get/${device}/${file}"
     msg "Attempting download..."
     wget $nightlyDownload -O $EXTERNAL_STORAGE/$file
     (( $? )) && err "Problem occurred with download"
     msg "Saved to $EXTERNAL_STORAGE/$file"
-  fi
+	}
 }
 
 parseGoogle()
 {
   local ver=$1
   local url="http://mirror.teamdouche.net/?type=gapps"
-  [[ ! "$EXTERNAL_STORAGE" ]] && err "Could not detect External storage location"
-  msg "Working... Please wait"
-  [[ -d "$workdir" ]] && rm -rf $workdir
+
+  [[ ! "$EXTERNAL_STORAGE" ]] && {
+		err "Could not detect External storage location"
+	}
+
+	msg "Working... Please wait"
+  
+	[[ -d "$workdir" ]] && {
+		rm -rf $workdir
+	}
+
   mkdir $workdir
-  local gindex="$workdir/gindex"
-  wget -q $url -O $gindex
-  (( $? )) && err "Problem parsing URL"
+
+	local gindex="$workdir/gindex"
+  
+	wget -q $url -O $gindex
+  
+	(( $? )) && { 
+		err "Problem parsing URL"
+	}
+
   local temp="$workdir/tmp.gfiles"
-  awk -F'[<>]' '{for(x=1;x<=NF;x++) if($x ~ /.zip$/) print $x}' $gindex > $temp
-  local pattern="gapps-$ver"
+
+	awk -F'[<>]' '{for(x=1;x<=NF;x++) if($x ~ /.zip$/) print $x}' $gindex > $temp
+  
+	local pattern="gapps-$ver"
   local zip
   local gappno
   local gapps=()
-  for zip in $( grep "$pattern" $temp )
+  
+	for zip in $( grep "$pattern" $temp )
   do
     gappno=$( echo "$zip" | awk -F'[-]' '{for(x=1;x<=NF;x++) if($x ~ /[0-9]/) print $x}' )
     gapps+=( $gappno )
   done
-  local num filename
-  if [ "$ver" = "mdpi" ]
-  then
+  
+	local num filename
+  
+	[ "$ver" = "mdpi" ] && {
     question "Download tiny mdpi version? [y/N]"
     read tiny
     case "$tiny" in
       Y*|y*) local TINY=$tiny ;;
     esac
-  fi
-  if [ ! "$TINY" ]
-  then
+	}
+  
+	[ ! "$TINY" ] && {
     filename="$pattern-${gapps[0]}-signed.zip"
-  else
+	} || {
     filename="$pattern-tiny-${gapps[0]}-signed.zip"
-  fi
-  local fileUrl
-  msg "\`$filename' is latest Google files zip"
+	}
+  
+	local fileUrl
+  
+	msg "\`$filename' is latest Google files zip"
   question "Download now? [y/N]"
   read download
-  case "$download" in
+  
+	case "$download" in
     Y*|y*)
       fileUrl="http://mirror.teamdouche.net/get/various/${filename}" ;;
   esac
-  if [ ! "$fileUrl" ]
-  then
+  
+	[ ! "$fileUrl" ] && {
     msg "Not downloading Google files..."
-  else
+	} || {
     msg "Attempting download..."
     wget $fileUrl -O $EXTERNAL_STORAGE/$filename
-    (( $? )) && err "Problem downloading file"
+    (( $? )) && {
+			err "Problem downloading file"
+		}
     msg "Saved to $EXTERNAL_STORAGE/$filename"
-  fi
+	}
 }
 
 device=$( getprop ro.product.device )
@@ -203,8 +240,7 @@ helpMsg()
   exit 0
 }
 
-if (( $# ))
-then
+(( $# )) && {
   case "$1" in
     -g|--google)
       case "$device" in
@@ -220,7 +256,7 @@ then
     *)
       err "\`$1' not a recognized argument" ;;
   esac
-else
+} || {
   case "$device" in
     bravo|expresso|hero|heroc|inc|liberty|legend|passion|sholes|supersonic)
       parseNightly $device ;;
@@ -229,6 +265,6 @@ else
     *)
       err "\`$device' not supported" ;;
   esac
-fi
+}
 
 rm -rf $workdir
