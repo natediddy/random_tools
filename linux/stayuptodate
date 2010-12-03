@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# For DEBIAN systems
+#
 # *DO NOT* use this on a public or shared computer!
 # You must edit MY_PASS to contain your sudo login password
 #

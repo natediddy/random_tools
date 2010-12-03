@@ -1,0 +1,99 @@
+#!/bin/sh
+#
+# Archlinux ABS wrapper script
+# Easily compile packages similar to BSD ports/Gentoo portage systems
+#
+
+INSTALL=0
+
+err() {
+  local e=$1; shift
+  echo "$e"
+  exit 1
+}
+
+msg() {
+  local m=$1; shift
+  echo "$m"
+}
+
+[ ! "$1" ] && err "Use --help for options"
+
+if [ "$1" = "-h" -o "$1" = "--help" ]
+then
+  msg "Usage: $0 [PKGNAME]"
+  exit 0
+fi
+
+if [ "$#" = 2 ]
+then
+  if [ "$1" = "-i" -o "$1" = "--install" ]
+  then
+    (( INSTALL++ ))
+    PKGNAME=$2
+  else
+    err "Unknown option \`$1'"
+  fi
+elif [ "$#" = 1 ]
+then
+  if [ "$1" = "-c" -o "$1" = "--clean" ]
+  then
+    msg "Cleaning -> $HOME/abs_port"
+    rm -rf "$HOME/abs_port"
+    msg "Done"
+    exit 0
+  fi
+  PKGNAME=$1
+else
+  err "Too many args"
+fi
+
+[ ! "$PKGNAME" ] && err "package name not specified"
+
+[ ! -d "/var/abs" ] && err "ABS directory not found!"
+
+LOC=`find /var/abs -name "$PKGNAME"`
+
+[ ! "$LOC" ] && err "\`$PKGNAME' not found!"
+
+[ ! -d "$LOC" ] && err "\`$PKGNAME' not found!"
+
+mkdir -p "$HOME/abs_port" &&
+cp -r "$LOC" "$HOME/abs_port" &&
+cd "$HOME/abs_port/$PKGNAME"
+
+[ ! -f "PKGBUILD" ] && err "$PKGNAME's \`PKGBUILD' not found!"
+
+echo -n "Configure $PKGNAME by editing its PKGBUILD? "
+read EDIT
+
+case "$EDIT" in
+  y*|Y*) 
+    if [ ! "$EDITOR" ]
+    then
+      for E in "nano" "vi" "ee" "vim" "joe" "emacs" "gedit"
+      do
+        if [ "`which $E`" != "" ]
+        then
+          myE="$E"
+          break
+        fi
+      done
+      [ ! "$myE" ] && err "Could not determine editor"
+      msg "Opening PKGBUILD with $myE..."
+      $myE PKGBUILD
+    else
+      msg "Opening PKGBUILD with $EDITOR..."
+      $EDITOR PKGBUILD
+    fi
+        ;;
+esac
+
+makepkg -s -f
+
+PKG=`ls | grep "pkg.tar.xz$"`
+
+[ "$PKG" = "" ] && err "Failure"
+
+(( INSTALL )) && { exec sudo pacman -U "$PKG"; } || { msg "Done"; }
+
