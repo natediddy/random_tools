@@ -1,8 +1,0 @@
-irssinotifs simply loops over a file produced by the Irssi perl plugin "fnotify.pl"
-And prints any hilights, private messages, etc. onto the console screen.
-
-I originally wrote it in shell...But have been studying C/C++ and needed some practice >.<
-
-For learning purposes one could compare the 2 versions and maybe see how some common things are done in C (although the C is probably not written the best in the world).
-
-  ~natediddy
