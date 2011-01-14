@@ -5,10 +5,7 @@
 #
 
 # XXX: EDITME
-PKG_PREFIX=com.nathanforbes
-
-# EXAMPLE:
-#PKG_PREFIX=com.nathan
+PKG_PREFIX=com.yourname
 
 if [ ! $1 ]
 then
