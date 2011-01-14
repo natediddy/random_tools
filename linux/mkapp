@@ -15,7 +15,7 @@ fi
 
 $( which android ) create project \
 	--name $1 \
-	--target 4 \
+	--target 3 \
 	--path $( pwd )/$1 \
 	--package $( echo "$PKG_PREFIX" ).$( echo "$1" | tr [:upper:] [:lower:] ) \
 	--activity $1
