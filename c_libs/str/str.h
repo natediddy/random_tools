@@ -1,26 +1,11 @@
-/*
- * Simple custom string class
- * Nathan Forbes
- */
+#ifndef STR_H
+#define STR_H
 
-#ifndef STRING_H
-#define STRING_H
+int s_size_of(const char *);
+int s_endswith(const char *, const char *);
+int s_startswith(const char *, const char *);
+int s_compare(const char *, const char *);
+char *s_cat(const char *, const char *);
+int s_contains(const char *, const char *);
 
-class str {
-   char *m_str;
-   unsigned int m_size;
-   unsigned int m_size_of(const char *);
-   char *m_alloc(const char *, unsigned int);
-public:
-   str(const char *);
-   ~str();
-   unsigned int size();
-   char *get();
-   void cat(const char *);
-   bool endswith(const char *);
-   bool startswith(const char *);
-   bool comp(const char *);
-};
-
-#endif /* STRING_H */
-
+#endif /* STR_H */
