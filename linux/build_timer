@@ -102,4 +102,4 @@ fi
 
 END=`date +%s`
 diff $START $END
-echo "Finished at -> ${B}m${C}s"
+echo "Finished at -> ${B} minutes, ${C} seconds"
