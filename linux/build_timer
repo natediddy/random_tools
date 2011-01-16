@@ -24,6 +24,7 @@ then
 	echo "    Uses no target (runs just \`make')."
 	echo "If [jobs] is not given:"
 	echo "    Uses the default number of cores present on your machine."
+    echo "Uses \`schedtool' if installed"
     exit 0
 fi
 
