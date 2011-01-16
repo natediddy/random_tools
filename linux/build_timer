@@ -7,23 +7,23 @@
 if [ ! "$OUT" ]
 then
     echo "Build environment not complete, run:"
-	echo "    . build/envsetup.sh"
-	echo "And then \`lunch' your product."
-	exit 1
+    echo "    . build/envsetup.sh"
+    echo "And then \`lunch' your product."
+    exit 1
 fi
 
 if [ "$1" = "-h" -o "$1" = "--help" ]
 then
     echo "usage: $0 [make target] [jobs]"
-	echo
+    echo
     echo "Example:"
     echo "    $0 otapackage 4"
-	echo
+    echo
     echo "(Both [make target] and/or [jobs] can be left blank)"
-	echo "If [make target] is not given:"
-	echo "    Uses no target (runs just \`make')."
-	echo "If [jobs] is not given:"
-	echo "    Uses the default number of cores present on your machine."
+    echo "If [make target] is not given:"
+    echo "    Uses no target (runs just \`make')."
+    echo "If [jobs] is not given:"
+    echo "    Uses the default number of cores present on your machine."
     echo "Uses \`schedtool' if installed"
     exit 0
 fi
@@ -40,26 +40,26 @@ then
     if (( $1 ))
     then
         JOBS="$1"
-		TARGET=
-	else
-		JOBS=$DEFAULT_JOBS
-		TARGET="$1"
-	fi
+        TARGET=
+    else
+        JOBS=$DEFAULT_JOBS
+        TARGET="$1"
+    fi
 elif [ "$#" = "2" ]
 then
     for i in "$@"
     do
-		if (( $i ))
+        if (( $i ))
         then
             JOBS="$i"
-		else
-			TARGET="$i"
-		fi
-	done
+        else
+            TARGET="$i"
+        fi
+    done
     if [ ! "$JOBS" ]
     then
         JOBS="$DEFAULT_JOBS"
-	fi
+    fi
     if [ ! "$TARGET" ]
     then
         TARGET=
@@ -74,26 +74,25 @@ then
 fi
 
 diff() {
-	local s=$1
-	local e=$2
+    local s=$1
+    local e=$2
     A=`expr $e - $s`
-	B=`expr $A / 60`
-	C=`expr $A % 60`
+    B=`expr $A / 60`
+    C=`expr $A % 60`
 }
 
 START=`date +%s`
 
 if (( USE_SCHEDTOOL ))
 then
-	echo "*** schedtool -B -n 1 -e ionice -n 1 make -j $JOBS $TARGET ***"
+    echo "*** schedtool -B -n 1 -e ionice -n 1 make -j $JOBS $TARGET ***"
     schedtool -B -n 1 -e ionice -n 1 make -j $JOBS $TARGET
 else
-	echo "*** make -j $JOBS $TARGET ***"
-	make -j $JOBS $TARGET
+    echo "*** make -j $JOBS $TARGET ***"
+    make -j $JOBS $TARGET
 fi
 
 
 END=`date +%s`
 diff $START $END
 echo "Finished making \`$1' (${B}m${C}s)"
-
