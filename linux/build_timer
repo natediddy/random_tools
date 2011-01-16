@@ -4,6 +4,13 @@
 # Nathan Forbes
 #
 
+if [ "`echo "$0" | grep "/bin/"`" != "" ]
+then
+    MYNAME="`basename $0`"
+else
+    MYNAME="$0"
+fi
+
 if [ ! "$OUT" ]
 then
     echo "Build environment not complete, run:"
@@ -14,10 +21,10 @@ fi
 
 if [ "$1" = "-h" -o "$1" = "--help" ]
 then
-    echo "usage: $0 [make target] [jobs]"
+    echo "usage: $MYNAME [make target] [jobs]"
     echo
     echo "Example:"
-    echo "    $0 otapackage 4"
+    echo "    $MYNAME otapackage 4"
     echo
     echo "(Both [make target] and/or [jobs] can be left blank)"
     echo "If [make target] is not given:"
