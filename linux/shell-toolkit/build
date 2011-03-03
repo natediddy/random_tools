@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+TARGETS="eq ne gt ge lt le"
+
+Build() {
+   echo "CC: $1.c  ->  $1"
+   gcc "$1.c" -o "$1"
+}
+
+Install() {
+   local LOC="/usr/local/bin"
+   for i in $TARGETS
+   do
+      if [ -f "$i" ]
+      then
+         echo "Install:  $i  ->  $LOC"
+         install "$i" "$LOC/$i"
+      fi
+   done
+}
+
+if [ "$1" = "" ]
+then
+   for i in $TARGETS
+   do
+      Build "$i"
+   done
+else
+   if [ "$1" = "install" ]
+   then
+      Install
+      exit
+   fi
+   if [ "$1" = "clean" ]
+   then
+      rm -f $TARGETS
+      exit
+   fi
+   if [ "$1" = "help" ]
+   then
+      echo "usage: $0 [install|clean]"
+      exit
+   fi
+   for i in "$@"
+   do
+      Build "$i"
+   done
+fi
