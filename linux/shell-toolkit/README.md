@@ -2,7 +2,9 @@ Simple Shell Toolkit
 ---------
 
 To build and install, from this directory run:
-    ./build && ./build install && ./build clean
+    ./build
+    sudo ./build install
+    ./build clean
 
 eq -> equal
 ne -> not equal
