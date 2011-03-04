@@ -33,3 +33,5 @@ Examples:
       echo "$COUNT"
       (( COUNT++ ))
     done
+
+Upon success, all of these return 0, and 1 otherwise.

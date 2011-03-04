@@ -6,8 +6,9 @@ static const char *prg;
 static int
 usage()
 {
-   printf("usage: %s [data1] [data2]\n", prg);
-   printf("Only numerical values permitted\n");
+   fprintf(stderr, "usage: %s [data1] [data2]\n", prg);
+   fprintf(stderr, "Only numerical values permitted\n");
+   fprintf(stderr, "Report bugs/issues to 'me AT nathanforbes DOT com'\n");
    return EXIT_FAILURE;
 }
 

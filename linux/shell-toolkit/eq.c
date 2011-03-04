@@ -7,8 +7,9 @@ static const char *prg;
 static int
 usage()
 {
-   printf("usage: %s [data1] [data2] [dataN] ...\n", prg);
-   printf("All data is compared for equality against [data1]\n");
+   fprintf(stderr, "usage: %s [data1] [data2] [dataN] ...\n", prg);
+   fprintf(stderr, "All data is compared for equality against [data1]\n\n");
+   fprintf(stderr, "Report bugs/issues to 'me AT nathanforbes DOT com'\n");
    return EXIT_FAILURE;
 }
 

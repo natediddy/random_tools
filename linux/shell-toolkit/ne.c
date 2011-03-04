@@ -7,8 +7,9 @@ static const char *prg;
 static int
 usage()
 {
-   printf("usage: %s [data1] [data2] [dataN] ...\n", prg);
-   printf("All data is compared for inequality against [data1]\n");
+   fprintf(stderr, "usage: %s [data1] [data2] [dataN] ...\n", prg);
+   fprintf(stderr, "All data is compared for inequality against [data1]\n");
+   fprintf(stderr, "Report bugs/issues to 'me AT nathanforbes DOT com'\n");
    return EXIT_FAILURE;
 }
 
@@ -17,7 +18,7 @@ main(argc, argv)
    int    argc;
    char **argv;
 {
-   int ret, first = 0, err = 0;
+   int first = 0, ne = 0;
    char *first_arg;
 
    prg = *argv;
@@ -31,8 +32,8 @@ main(argc, argv)
             break;
          }
          if(first) {
-            if(strcmp(first_arg,*argv) == 0) {
-               err++;
+            if(strcmp(first_arg,*argv) != 0) {
+               ne++;
             }
          }
          if(!first) {
@@ -41,9 +42,9 @@ main(argc, argv)
          }
       } while(*argv++);
    }
-   if(err != 0) {
-      return EXIT_FAILURE;
+   if(ne != 0) {
+      return EXIT_SUCCESS;
    }
-   return EXIT_SUCCESS;
+   return EXIT_FAILURE;
 }
 
