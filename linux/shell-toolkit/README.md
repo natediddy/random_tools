@@ -6,12 +6,12 @@ To build and install, from this directory run:
     sudo ./build install
     ./build clean
 
-eq -> equal
-ne -> not equal
-gt -> greater than
-ge -> greater than or equal to
-lt -> less than
-le -> less than or equal to
+eq -> equal <br />
+ne -> not equal <br />
+gt -> greater than <br />
+ge -> greater than or equal to <br />
+lt -> less than <br />
+le -> less than or equal to <br />
 
 These are meant to be used from the command line or in scripts with control statements such as *if* and *while*.
 
