@@ -2,9 +2,9 @@ Simple Shell Toolkit
 ---------
 
 To build and install, from this directory run:
-    ./build
     sudo ./build install
-    ./build clean
+To uninstall, from this directory run:
+    sudo ./build uninstall
 
 eq -> equal <br />
 ne -> not equal <br />

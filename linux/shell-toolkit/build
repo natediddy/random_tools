@@ -2,10 +2,21 @@
 
 TARGETS="eq ne gt ge lt le"
 
+if [ "`which gcc`" != "" ]
+then
+   COMPILER=gcc
+elif [ "`which cc`" != "" ]
+then
+   COMPILER=cc
+else
+   echo "Could not find a C compiler! Please install gcc"
+   exit
+fi
+
 Build() {
    local target=$1
    echo "CC: $target.c  ->  $target"
-   gcc "$target.c" -o "$target"
+   $COMPILER "$target.c" -o "$target"
 }
 
 Install() {
@@ -19,6 +30,27 @@ Install() {
       fi
       echo "Install:  $i  ->  $LOC/$i"
       install "$i" "$LOC/$i"
+   done
+}
+
+Uninstall() {
+   local LOC
+   local one=$1
+   local i
+   if [ "$one" != "" ]
+   then
+      local target=$@
+   else
+      local target=$TARGETS
+   fi
+   for i in $target
+   do
+      LOC=`which $i`
+      if [ "$LOC" != "" ]
+      then
+         echo "Uninstall:  $LOC"
+         rm -f "$LOC"
+      fi
    done
 }
 
@@ -124,24 +156,40 @@ else
    then
       Install
       exit
-   fi
-   if [ "$1" = "clean" ]
+   elif [ "$1" = "uninstall" ]
+   then
+      if [ $# > 1 ]
+      then
+         T=($@)
+         T=(${T[@]:1})
+         T="${T[@]}"
+         Uninstall $T
+      else
+         Uninstall
+      fi
+      exit
+   elif [ "$1" = "clean" ]
    then
       rm -f $TARGETS
       exit
-   fi
-   if [ "$1" = "help" ]
+   elif [ "$1" = "help" ]
    then
-      echo "usage: $0 [install|clean]"
+      echo "usage: $0 [install|uninstall|clean|test]"
       exit
-   fi
-   if [ "$1" = "test" ]
+   elif [ "$1" = "test" ]
    then
       RunTests
       exit
+   else
+      for i in "$@"
+      do
+         for n in $TARGETS
+         do
+            if [ "$n" = "$i" ]
+            then
+               Build "$n"
+            fi
+         done
+      done
    fi
-   for i in "$@"
-   do
-      Build "$i"
-   done
 fi
