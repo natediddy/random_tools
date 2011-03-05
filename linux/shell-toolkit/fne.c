@@ -7,7 +7,7 @@ static int
 usage()
 {
   fprintf(stderr, "usage: %s [filename]\n", prg);
-  /* TODO bug reporting */
+  fprintf(stderr, "Report bugs/issues to 'me AT nathanforbes DOT com'\n");
   return EXIT_FAILURE;
 }
 
@@ -27,6 +27,8 @@ main(argc, argv)
   char **argv;
 {
   prg = *argv;
+  if (argc != 2)
+    return usage();
   if (!does_file_exist(fopen(argv[1],"r")))
     return EXIT_SUCCESS;
   return EXIT_FAILURE;
