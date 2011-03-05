@@ -6,12 +6,15 @@ To build and install, from this directory run:
 To uninstall, from this directory run:
     sudo ./build uninstall
 
-eq -> equal <br />
-ne -> not equal <br />
-gt -> greater than <br />
-ge -> greater than or equal to <br />
-lt -> less than <br />
-le -> less than or equal to <br />
+eq  -> equal <br />
+ne  -> not equal <br />
+gt  -> greater than <br />
+ge  -> greater than or equal to <br />
+lt  -> less than <br />
+le  -> less than or equal to <br />
+fe  -> file exists <br />
+fne -> file does not exist <br />
+fsz -> view size of file <br />
 
 These are meant to be used from the command line or in scripts with control statements such as *if* and *while*.
 
@@ -22,6 +25,7 @@ Examples:
     VAR2=world
     COUNT=0
     NUM=14
+    FILE=~/somefile.zip
 
     if eq hello $VAR1; then
       echo "hello == $VAR1"
@@ -33,5 +37,8 @@ Examples:
       echo "$COUNT"
       (( COUNT++ ))
     done
+    if fe $FILE; then
+      echo "$FILE exists!"
+    fi
 
-Upon success, all of these return 0, and 1 otherwise.
+Upon passing the test, all of these return 0, and 1 otherwise. Except for *fsz*, which prints the size of a file
