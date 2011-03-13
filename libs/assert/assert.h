@@ -17,14 +17,14 @@
 
 #define SHOW_ASSERT_FAILUIRE(msg) {                         \
    std::ostringstream s;                                    \
-   s << "error in " << __FILE__ << ':'                      \
+   s << "in " << __FILE__ << ':'                      \
    << __LINE__ << ": \n\t" << msg << '\0';                  \
-   __present_error("Internal Error", s.str().c_str());        \
+   __present_error("Assertion", s.str().c_str());        \
 }
 
 #define assert(x) {                                \
-   if(!x) {                                        \
-      const char *msg = "Assertion " #x " failed"; \
+   if((x)) {                                        \
+      const char *msg = "Assertion " #x " caught"; \
       SHOW_ASSERT_FAILUIRE(msg);                   \
    }                                               \
 }
