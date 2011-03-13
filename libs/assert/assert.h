@@ -19,7 +19,7 @@
    std::ostringstream s;                                    \
    s << "in " << __FILE__ << ':'                            \
    << __LINE__ << ": \n\t" << msg << '\0';                  \
-   __present_error("Assertion", s.str().c_str());           \
+   __present_assertion("Assertion", s.str().c_str());       \
 }
 
 #define assert(condition) {                                 \
@@ -29,7 +29,7 @@
    }                                                        \
 }
 
-static inline void __present_error(const char *c, const char *m) {
+static inline void __present_assertion(const char *c, const char *m) {
    std::cerr << c << ": " << m << std::endl;
 }
 
