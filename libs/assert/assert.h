@@ -17,16 +17,16 @@
 
 #define SHOW_ASSERT_FAILUIRE(msg) {                         \
    std::ostringstream s;                                    \
-   s << "in " << __FILE__ << ':'                      \
+   s << "in " << __FILE__ << ':'                            \
    << __LINE__ << ": \n\t" << msg << '\0';                  \
-   __present_error("Assertion", s.str().c_str());        \
+   __present_error("Assertion", s.str().c_str());           \
 }
 
-#define assert(x) {                                \
-   if((x)) {                                        \
-      const char *msg = "Assertion " #x " caught"; \
-      SHOW_ASSERT_FAILUIRE(msg);                   \
-   }                                               \
+#define assert(condition) {                                 \
+   if((condition)) {                                        \
+      const char *msg = "Assertion " #condition " caught";  \
+      SHOW_ASSERT_FAILUIRE(msg);                            \
+   }                                                        \
 }
 
 static inline void __present_error(const char *c, const char *m) {
