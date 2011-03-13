@@ -1,32 +1,35 @@
 /*
- * Simple "assert" function for C++
+ * Simple assert functionality for C++
+ *
+ * Used as:
+ *    assert(condition);
+ *
  * Nathan Forbes
  */
 
-#ifndef ASSERT_H
-#define ASSERT_H
+#ifndef INCLUDED_ASSERT_H
+#define INCLUDED_ASSERT_H
 
 #include <iostream>
 #include <sstream>
 
 #define SHOW_ASSERT_FAILUIRE(msg) {                         \
    std::ostringstream s;                                    \
-   s << "Internal error in " << __FILE__ << ':'             \
+   s << "error in " << __FILE__ << ':'             \
    << __LINE__ << ": \n\t" << msg << '\0';                  \
    present_error("Internal Error", s.str().c_str());        \
 }
 
-#define ASSERT(x) {                                \
-   if(!x) {                                        \
+#define assert(x) {                                \
+   if(!x) {                           \
       const char *msg = "Assertion " #x " failed"; \
       SHOW_ASSERT_FAILUIRE(msg);                   \
    }                                               \
 }
 
-static inline void present_error(const char *caption, const char *message)
-{
-   std::cerr << caption << ": " << message << std::endl;
+static inline void present_error(const char *c, const char *m) {
+   std::cerr << c << ": " << m << std::endl;
 }
 
-#endif /* ASSERT_H */
+#endif /* INCLUDED_ASSERT_H */
 
