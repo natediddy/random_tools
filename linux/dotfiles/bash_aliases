@@ -1,0 +1,7 @@
+# Aliases for bash
+
+alias ls='ls -F --color=auto'
+alias la='ls -A'
+alias ll='ls -Al'
+alias ..='cd ..'
+alias xterm='xterm -bg black -fg white -geometry 80x24'

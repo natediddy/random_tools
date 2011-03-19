@@ -1,0 +1,43 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+[[ -r ~/.bash_aliases ]] && . ~/.bash_aliases
+
+PS1='\u@\h:\w$ '
+
+export EDITOR=vim
+
+if [ -z "$DISPLAY" ]
+then
+	export BROWSER=w3m
+else
+	export BROWSER=chromium
+fi
+
+function makex() {
+  schedtool -B -n 1 -e ionice -n 1 make -j 8 "$@"
+}
+
+function reposyncx() {
+  schedtool -B -n 1 -e ionice -n 1 repo sync -j 15 "$@"
+}
+
+for i in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools
+do
+	if [ -d "$i" ]
+	then
+		if [ "`echo "$PATH" | grep "$i"`" = "" ]
+		then
+			export PATH=${PATH}:${i}
+		fi
+	fi
+done
+
+if ( which fortune &>/dev/null )
+then
+	echo -n -e "`fortune -a`\n-------------------\n"
+fi
