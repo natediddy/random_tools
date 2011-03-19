@@ -27,7 +27,7 @@ function reposyncx() {
   schedtool -B -n 1 -e ionice -n 1 repo sync -j 15 "$@"
 }
 
-for i in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools
+for i in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools ~/android-ndk
 do
 	if [ -d "$i" ]
 	then
