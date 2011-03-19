@@ -1,4 +1,7 @@
-# Aliases for bash
+#
+# ~/.bash_aliases
+# (ArchLinux)
+#
 
 alias ls='ls -F --color=auto'
 alias la='ls -A'

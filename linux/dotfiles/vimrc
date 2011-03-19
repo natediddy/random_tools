@@ -1,3 +1,10 @@
+"
+" ~/.vimrc
+" (ArchLinux)
+" This is from a C/C++ support plugin for Vim. It works fine so I just use it
+" as my personal vim setup with a couple tweaks.
+"
+
 "===================================================================================
 "         FILE:  .vimrc
 "  DESCRIPTION:  suggestion for a personal configuration file ~/.vimrc

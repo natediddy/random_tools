@@ -1,5 +1,6 @@
 #
 # ~/.bash_profile
+# (ArchLinux)
 #
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
