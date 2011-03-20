@@ -12,13 +12,6 @@ PS1='\u@\h:\w$ '
 
 export EDITOR=vim
 
-if [ -z "$DISPLAY" ]
-then
-	export BROWSER=w3m
-else
-	export BROWSER=chromium
-fi
-
 function makex() {
   schedtool -B -n 1 -e ionice -n 1 make -j 8 "$@"
 }
