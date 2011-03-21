@@ -3,8 +3,9 @@
 # (ArchLinux)
 #
 
-[[ -f ~/.bashrc ]] && . ~/.bashrc
+[[ -r ~/.bashrc ]] && . ~/.bashrc
 
+# start GUI automatically following boot (no login)
 if [[ -z $DISPLAY && ! -a /tmp/.X11-unix/X0 && $( id -u ) != 0 ]]
 then
   exec startx

@@ -3,24 +3,16 @@
 # (ArchLinux)
 #
 
-# If not running interactively, don't do anything
+# Setup -------------------------------
 [[ $- != *i* ]] && return
-
 [[ -r ~/.bash_aliases ]] && . ~/.bash_aliases
 
+# Variables ---------------------------
 PS1='\u@\h:\w$ '
-
 export EDITOR=vim
 export TERM=xterm
 
-function makex() {
-  schedtool -B -n 1 -e ionice -n 1 make -j 8 "$@"
-}
-
-function reposyncx() {
-  schedtool -B -n 1 -e ionice -n 1 repo sync -j 15 "$@"
-}
-
+## personal directories for PATH
 for i in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools ~/android-ndk
 do
 	if [ -d "$i" ] && [ "`echo "$PATH" | grep "$i"`" = "" ]
@@ -29,6 +21,17 @@ do
 	fi
 done
 
+
+# Functions ---------------------------
+function makex() {
+  schedtool -B -n 1 -e ionice -n 1 make -j 8 "$@"
+}
+
+function reposyncx() {
+  schedtool -B -n 1 -e ionice -n 1 repo sync -j 15 "$@"
+}
+
+# Miscellaneous -----------------------
 if ( which fortune &>/dev/null )
 then
 	echo -n -e "`fortune -a`\n-------------------\n"
