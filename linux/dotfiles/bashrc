@@ -11,6 +11,7 @@
 PS1='\u@\h:\w$ '
 
 export EDITOR=vim
+export TERM=xterm
 
 function makex() {
   schedtool -B -n 1 -e ionice -n 1 make -j 8 "$@"
@@ -22,12 +23,9 @@ function reposyncx() {
 
 for i in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools ~/android-ndk
 do
-	if [ -d "$i" ]
+	if [ -d "$i" ] && [ "`echo "$PATH" | grep "$i"`" = "" ]
 	then
-		if [ "`echo "$PATH" | grep "$i"`" = "" ]
-		then
-			export PATH=${PATH}:${i}
-		fi
+		export PATH=${PATH}:${i}
 	fi
 done
 
