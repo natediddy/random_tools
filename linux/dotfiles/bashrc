@@ -31,6 +31,29 @@ function reposyncx() {
   schedtool -B -n 1 -e ionice -n 1 repo sync -j 15 "$@"
 }
 
+function frostwire_music_update() {
+  local fdir=~/FrostWire/Saved
+  local MP3=0
+  local OGG=0
+  [[ ! -d $fdir ]] && return
+  [[ "`ls $fdir`" = "" ]] && return	
+  [[ "`ls $fdir | grep ".mp3$"`" != "" ]] && (( MP3++ ))
+  [[ "`ls $fdir | grep ".ogg$"`" != "" ]] && (( OGG++ ))
+  if ! (( MP3 )) && ! (( OGG ))
+  then
+    return
+  elif (( MP3 )) && (( OGG ))
+  then
+    mv $fdir/*.{mp3,ogg} ~/Music/
+	elif (( MP3 )) && ! (( OGG ))
+  then
+    mv $fdir/*.mp3 ~/Music/
+	elif ! (( MP3 )) && (( OGG ))
+  then
+    mv $fdir/*.ogg ~/Music/
+  fi
+}
+
 # Miscellaneous -----------------------
 if ( which fortune &>/dev/null )
 then
