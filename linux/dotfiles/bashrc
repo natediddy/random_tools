@@ -15,10 +15,10 @@ export TERM=xterm
 ## personal directories for PATH
 for i in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools ~/android-ndk
 do
-	if [ -d "$i" ] && [ "`echo "$PATH" | grep "$i"`" = "" ]
-	then
-		export PATH=${PATH}:${i}
-	fi
+  if [ -d "$i" ] && [ "`echo "$PATH" | grep "$i"`" = "" ]
+  then
+    export PATH=${PATH}:${i}
+  fi
 done
 
 
@@ -45,10 +45,10 @@ function frostwire_music_update() {
   elif (( MP3 )) && (( OGG ))
   then
     mv $fdir/*.{mp3,ogg} ~/Music/
-	elif (( MP3 )) && ! (( OGG ))
+  elif (( MP3 )) && ! (( OGG ))
   then
     mv $fdir/*.mp3 ~/Music/
-	elif ! (( MP3 )) && (( OGG ))
+  elif ! (( MP3 )) && (( OGG ))
   then
     mv $fdir/*.ogg ~/Music/
   fi
@@ -57,5 +57,5 @@ function frostwire_music_update() {
 # Miscellaneous -----------------------
 if ( which fortune &>/dev/null )
 then
-	echo -n -e "`fortune -a`\n-------------------\n"
+  echo -n -e "`fortune -a`\n-------------------\n"
 fi
