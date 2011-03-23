@@ -25,7 +25,16 @@ function record_desktop() {
   then
     FILE="`date +%m%d%Y`_$$"
   fi
-  ffmpeg -f alsa -i pulse -f x11grab -r 30 -s 1366x768 -i :0.0 -acodec pcm_s16le -vcodec libx264 -vpre lossless_ultrafast -threads 0 $FILE.mkv
+  ffmpeg -f alsa -i pulse -f x11grab -r 30 -s 1366x768 -i :0.0 -acodec \
+    pcm_s16le -vcodec libx264 -vpre lossless_ultrafast -threads 0 $FILE.mkv
+}
+
+function makex() {
+  schedtool -B -n 1 -e ionice -n 1 make -j 8 "$@"
+}
+
+function reposyncx() {
+  schedtool -B -n 1 -e ionice -n 1 repo sync -j 12 "$@"
 }
 
 # miscellaneous
