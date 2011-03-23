@@ -57,7 +57,7 @@ function frostwire_music_update() {
 function cower_aur_install() {
   local i
   for i in $@
-	do
+  do
     cower -d $i && cd $i && \
       makepkg -s && pacman -U `ls | grep "\^*\.pkg.*\xz$"` && \
       cd ../
