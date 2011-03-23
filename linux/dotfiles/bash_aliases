@@ -1,20 +1,10 @@
-#
-# ~/.bash_aliases
-# (ArchLinux)
-#
+# .bash_aliases
+# Fedora
 
-alias ls='ls -F --color=auto'
-alias la='ls -A'
-alias ll='ls -Al'
 alias ..='cd ../'
-alias ...='cd ../../'
-alias ....='cd ../../../'
+alias ls='ls -F --color=auto'
+alias la='ls -A --color=auto'
+alias ll='ls -Al --color=auto'
 alias attach='screen -raAd'
-alias pacman='sudo pacman'
-alias yt='youtube-dl -l'
-
-# cower
-alias cower='cower --color=auto'
-alias aursc='cower -s'
-alias aurdl='cower -d'
-alias aurin='cower_aur_install $@'
+alias yum='sudo yum'
+alias rec-desk='record_desktop $1'

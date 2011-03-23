@@ -1,72 +1,33 @@
-#
-# ~/.bashrc
-# (ArchLinux)
-#
+# .bashrc
+# Fedora
 
-# Setup -------------------------------
-[[ $- != *i* ]] && return
-[[ -r ~/.bash_aliases ]] && . ~/.bash_aliases
+# setup -------------------------------
+for i in /etc/bashrc ~/.bash_aliases
+do
+  [ -f $i ] && . $i
+done
 
-# Variables ---------------------------
+# variables ---------------------------
 PS1='\u@\h:\w$ '
 export EDITOR=vim
-export TERM=xterm
-
-## personal directories for PATH
-for i in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools ~/android-ndk
+for j in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools ~/android-ndk
 do
-  if [ -d "$i" ] && [ "`echo "$PATH" | grep "$i"`" = "" ]
+  if [[ -d $j && "`echo "$PATH" | grep "$j"`" = "" ]]
   then
-    export PATH=${PATH}:${i}
+    export PATH=${PATH}:${j}
   fi
 done
 
-
-# Functions ---------------------------
-function makex() {
-  schedtool -B -n 1 -e ionice -n 1 make -j 8 "$@"
-}
-
-function reposyncx() {
-  schedtool -B -n 1 -e ionice -n 1 repo sync -j 15 "$@"
-}
-
-function frostwire_music_update() {
-  local fdir=~/FrostWire/Saved
-  local MP3=0
-  local OGG=0
-  [[ ! -d $fdir ]] && return
-  [[ "`ls $fdir`" = "" ]] && return	
-  [[ "`ls $fdir | grep ".mp3$"`" != "" ]] && (( MP3++ ))
-  [[ "`ls $fdir | grep ".ogg$"`" != "" ]] && (( OGG++ ))
-  if ! (( MP3 )) && ! (( OGG ))
+# functions ---------------------------
+function record_desktop() {
+  local FILE="$1"
+  if [ -z $FILE ]
   then
-    return
-  elif (( MP3 )) && (( OGG ))
-  then
-    mv $fdir/*.{mp3,ogg} ~/Music/
-  elif (( MP3 )) && ! (( OGG ))
-  then
-    mv $fdir/*.mp3 ~/Music/
-  elif ! (( MP3 )) && (( OGG ))
-  then
-    mv $fdir/*.ogg ~/Music/
+    FILE="`date +%m%d%Y`_$$"
   fi
+  ffmpeg -f alsa -i pulse -f x11grab -r 30 -s 1366x768 -i :0.0 -acodec pcm_s16le -vcodec libx264 -vpre lossless_ultrafast -threads 0 $FILE.mkv
 }
 
-function cower_aur_install() {
-  local i
-  for i in $@
-  do
-    cower -d $i && cd $i && \
-      makepkg -s && pacman -U `ls | grep "\^*\.pkg.*\xz$"` && \
-      cd ../
-    rm -rf $i
-  done
-}
-
-# Miscellaneous -----------------------
-if ( which fortune &>/dev/null )
-then
-  echo -n -e "`fortune -a`\n-------------------\n"
-fi
+# miscellaneous
+( which fortune &>/dev/null ) && \
+  echo -n -e "`fortune -a`\n--------------\n"

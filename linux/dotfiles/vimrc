@@ -1,6 +1,6 @@
 "
 " ~/.vimrc
-" (ArchLinux)
+" Fedora
 " This is from a C/C++ support plugin for Vim. It works fine so I just use it
 " as my personal vim setup with a couple tweaks.
 "
@@ -22,7 +22,7 @@
 " This must be first, because it changes other options as a side effect.
 "-------------------------------------------------------------------------------
 set nocompatible
-colorscheme satori
+colorscheme satorimod
 "
 "-------------------------------------------------------------------------------
 " Enable file type detection. Use the default filetype settings.
@@ -73,10 +73,11 @@ set mouse=a                     " enable the use of the mouse
 set nowrap                      " do not wrap lines
 set popt=left:8pc,right:3pc     " print options
 set ruler                       " show the cursor position all the time
-set shiftwidth=2                " number of spaces to use for each step of indent
+set shiftwidth=4                " number of spaces to use for each step of indent
 set showcmd                     " display incomplete commands
 set smartindent                 " smart autoindenting when starting a new line
-set tabstop=2                   " number of spaces that a <Tab> counts for
+set expandtab
+set tabstop=4                   " number of spaces that a <Tab> counts for
 set visualbell                  " visual bell instead of beeping
 set wildignore=*.bak,*.o,*.e,*~ " wildmenu: ignore these extensions
 set wildmenu                    " command-line completion in an enhanced mode
@@ -180,10 +181,12 @@ inoremap  ,  ,<Space>
 inoremap ( ()<Left>
 inoremap [ []<Left>
 inoremap { {}<Left>
+inoremap " ""<Left>
 "
 vnoremap ( s()<Esc>P<Right>%
 vnoremap [ s[]<Esc>P<Right>%
 vnoremap { s{}<Esc>P<Right>%
+vnoremap " s""<Esc>P<Right>%
 "
 "-------------------------------------------------------------------------------
 " autocomplete quotes (visual and select mode)
@@ -228,3 +231,7 @@ if has("autocmd")
   autocmd BufNewFile,BufRead *.pro  set filetype=qmake
 endif " has("autocmd")
 
+let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavArrows = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
+let g:miniBufExplModSelTarget = 1
