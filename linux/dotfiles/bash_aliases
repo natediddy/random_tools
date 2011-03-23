@@ -11,3 +11,10 @@ alias ...='cd ../../'
 alias ....='cd ../../../'
 alias attach='screen -raAd'
 alias pacman='sudo pacman'
+alias yt='youtube-dl -l'
+
+# cower
+alias cower='cower --color=auto'
+alias aursc='cower -s'
+alias aurdl='cower -d'
+alias aurin='cower_aur_install $@'
