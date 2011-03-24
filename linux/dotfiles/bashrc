@@ -21,8 +21,7 @@ done
 # functions ---------------------------
 function record_desktop() {
   local VIDEOFILE
-  if [ -z $1 ]
-  then
+  if [ -z $1 ]; then
     VIDEOFILE="`date +%m%d%Y`_$$"
   else
     VIDEOFILE="$1"
@@ -39,6 +38,54 @@ function makex() {
 
 function reposyncx() {
   schedtool -B -n 1 -e ionice -n 1 repo sync -j 12 "$@"
+}
+
+function header() {
+  local i header name
+  [ -z $1 ] && return
+  for i in $@; do
+    if [ "`echo $i | grep '.h$'`" = "" ]; then
+      header="$i.h"
+    else
+      header="$i"
+    fi
+    name="`echo $header | tr '.' ' ' | awk {'print $1'} \
+      | tr [:lower:] [:upper:]`_H"
+    echo -n -e "#ifndef $name\n#define $name\n\n\n\n#endif /* $name */\n\n" \
+      > $header && echo "header: created \`$header'"
+  done
+}
+
+function quickmain() {
+  local i main dialect
+  for i in $@; do
+    if [ "$i" = "c" ]; then
+      dialect="c"
+    elif [ "$i" = "cpp" ]; then
+      dialect="cpp"
+    else
+      if [ -z $main ]; then
+        main=$i
+      fi
+    fi
+  done
+  if [ -z $dialect ]; then
+    dialect="c"
+  fi
+  if [ -z $main ]; then
+    main="main"
+  fi
+  if [ "`echo $main | grep '.c$'`" = "" ]; then
+    if [ "`echo $main | grep ".cpp$"`" = "" ]; then
+      case $dialect in
+        c) main="$main.c" ;;
+      cpp) main="$main.cpp" ;;
+      esac
+    fi
+  fi
+  echo -n -e "#include <stdio.h>\n\nint main(int argc," \
+  "char **argv)\n{\n    return 0;\n}\n\n" > $main \
+    && echo "quickmain: created \`$main'"
 }
 
 # miscellaneous -----------------------
