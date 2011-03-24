@@ -20,13 +20,17 @@ done
 
 # functions ---------------------------
 function record_desktop() {
-  local FILE="$1"
-  if [ -z $FILE ]
+  local VIDEOFILE
+  if [ -z $1 ]
   then
-    FILE="`date +%m%d%Y`_$$"
+    VIDEOFILE="`date +%m%d%Y`_$$"
+  else
+    VIDEOFILE="$1"
   fi
-  ffmpeg -f alsa -i pulse -f x11grab -r 30 -s 1366x768 -i :0.0 -acodec \
-    pcm_s16le -vcodec libx264 -vpre lossless_ultrafast -threads 0 $FILE.mkv
+  ffmpeg -f alsa -i pulse -f x11grab -r 30 \
+    -s 1366x768 -i :0.0 -acodec pcm_s16le \
+    -vcodec libx264 -vpre lossless_ultrafast \
+    -threads 0 $VIDEOFILE.mkv
 }
 
 function makex() {
@@ -37,6 +41,6 @@ function reposyncx() {
   schedtool -B -n 1 -e ionice -n 1 repo sync -j 12 "$@"
 }
 
-# miscellaneous
+# miscellaneous -----------------------
 ( which fortune &>/dev/null ) && \
   echo -n -e "`fortune -a`\n--------------\n"
