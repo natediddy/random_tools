@@ -90,4 +90,5 @@ function quickmain() {
 
 # miscellaneous -----------------------
 ( which fortune &>/dev/null ) && \
-  echo -n -e "`fortune -a`\n--------------\n"
+  echo -n -e "`fortune -a`\n--------------\n" | \
+  tee -a ~/Documents/fortunes
