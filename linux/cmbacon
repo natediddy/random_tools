@@ -79,7 +79,6 @@ show_help() {
   echo "-------"
   echo "  stable      download latest stable build for device[s]"
   echo "  nightly     download latest nightly build for device[s]"
-      unset l
   echo "  rc          download latest release candidate for device[s]"
   echo "  show        only show latest builds for device[s] (don't download)"
   echo "  help        this message"
