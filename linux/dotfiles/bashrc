@@ -89,11 +89,13 @@ function quickmain() {
 }
 
 function yinstall() {
-  su -c "yum install $@"
+  local pkgs="$@"
+  su -c "yum install $pkgs"
 }
 
 function yerase() {
-  su -c "yum erase $@"
+  local pkgs="$@"
+  su -c "yum erase $pkgs"
 }
 
 # miscellaneous -----------------------
