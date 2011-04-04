@@ -88,6 +88,14 @@ function quickmain() {
     && echo "quickmain: created \`$main'"
 }
 
+function yinstall() {
+  su -c "yum install $@"
+}
+
+function yerase() {
+  su -c "yum erase $@"
+}
+
 # miscellaneous -----------------------
 ( which fortune &>/dev/null ) && \
   echo -n -e "`fortune -a`\n--------------\n" | \
