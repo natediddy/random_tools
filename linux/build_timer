@@ -11,14 +11,6 @@ else
     MYNAME="$0"
 fi
 
-if [ ! "$OUT" ]
-then
-    echo "Build environment not complete, run:"
-    echo "    . build/envsetup.sh"
-    echo "And then \`lunch' your product."
-    exit 1
-fi
-
 if [ "$1" = "-h" -o "$1" = "--help" ]
 then
     echo "usage: $MYNAME [make target] [jobs]"
@@ -35,6 +27,13 @@ then
     exit 0
 fi
 
+if [ ! "$OUT" ]
+then
+    echo "Build environment not complete, run:"
+    echo "    . build/envsetup.sh"
+    echo "And then \`lunch' your product."
+    exit 1
+fi
 
 DEFAULT_JOBS="`cat /proc/cpuinfo | grep "^processor" | wc -l`"
 
