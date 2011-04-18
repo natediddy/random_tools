@@ -1,0 +1,72 @@
+#!/bin/bash
+
+me="`basename $0`"
+
+QuickMain() {
+  local C CPP TYPE filename
+  C=0
+  CPP=0
+  TYPE=$1
+  filename="$2"
+  if (( TYPE )); then
+    (( CPP++ ))
+  else
+    (( C++ ))
+  fi
+  if [ -z $filename ]; then
+    if (( C )); then
+      filename="main.c"
+    elif (( CPP )); then
+      filename="main.cpp"
+    fi
+  else
+    if [ "`echo $filename | grep ".c$"`" = "" \
+        -o "`echo $filename | grep ".cpp$"`" = "" ]; then
+      if (( C )); then
+        filename="$filename.c"
+      else
+        filename="$filename.cpp"
+      fi
+    fi
+  fi
+  echo -n -e "/*\n * $filename\n */\n\n#include <stdio.h>\n\nint main(int argc, char **argv)\
+\n{\n\treturn 0;\n}\n\n" > $filename
+  [ ! -f $filename ] && echo "$me: error: did not create \`$filename'"
+}
+
+QuickHeader() {
+  local filename fheader
+  filename="$1"
+  if [ -z $filename ]; then
+    filename="header.h"
+  else
+    if [ "`echo $filename | grep ".h$"`" = "" ]; then
+      filename="$filename.h"
+    fi
+  fi
+  fheader="`echo $filename | tr '.' ' ' | awk {'print $1'} | tr a-z A-Z`_H"
+  echo -n -e "/*\n * $filename\n */\n\n#ifndef $fheader\n#define $fheader\n\n\n#endif /* $fheader */\n\n" \
+    > $filename
+  [ ! -f $filename ] && echo "$me: error: did not create \`$filename'"
+}
+
+MAIN=0
+HEADER=0
+
+case $1 in
+  --main) (( MAIN++ ));;
+  --header) (( HEADER++ ));;
+  *) echo "$me: \`$1' not recognized"; exit 1;;
+esac
+
+if (( MAIN )); then
+  case $2 in
+    -c) QuickMain 0 $3;;
+    -cpp) QuickMain 1 $3;;
+    *) echo "$me: \`$2' not recognized"; exit 1;;
+  esac
+elif (( HEADER )); then
+  QuickHeader $2
+fi
+
+exit 0
