@@ -1,104 +1,68 @@
 # .bashrc
-# Fedora
 
-# setup -------------------------------
-for i in /etc/bashrc ~/.bash_aliases
-do
-  [ -f $i ] && . $i
-done
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
 
-# variables ---------------------------
 PS1='\u@\h:\w$ '
-export EDITOR=vim
-for j in ~/bin ~/android-sdk/tools ~/android-sdk/platform-tools ~/android-ndk
-do
-  if [[ -d $j && "`echo "$PATH" | grep "$j"`" = "" ]]
-  then
-    export PATH=${PATH}:${j}
+[ "$EDITOR" != "vim" ] && export EDITOR=vim
+
+alias ..='cd ../'
+alias l='ls -F --color=auto'
+alias la='ls -AF --color=auto'
+alias ll='ls -AFl --color=auto'
+alias df='df -h'
+alias scrat='screen -raAd'
+alias scrls='screen -ls'
+alias chromei='google-chrome --incognito'
+
+for path in ~/bin ~/android-sdk/tools \
+  ~/android-sdk/platform-tools ~/android-ndk; do
+  if [ "x`echo "$PATH" | grep "$path"`" = "x" ]; then
+    if [ -d $path ]; then
+      export PATH=$PATH:$path
+    fi
   fi
 done
 
-# functions ---------------------------
+function yin() {
+  local args="$@"
+  su -c "yum install $args"
+}
+
+function yrm() {
+  local args="$@"
+  su -c "yum remove $args"
+}
+
 function record_desktop() {
-  local VIDEOFILE
+  local video
   if [ -z $1 ]; then
-    VIDEOFILE="`date +%m%d%Y`_$$"
+    video="`date +%m%d%Y`-$USER"
   else
-    VIDEOFILE="$1"
+    video="$1"
   fi
   ffmpeg -f alsa -i pulse -f x11grab -r 30 \
     -s 1366x768 -i :0.0 -acodec pcm_s16le \
     -vcodec libx264 -vpre lossless_ultrafast \
-    -threads 0 $VIDEOFILE.mkv
+    -threads 0 $video.mkv
 }
 
-function makex() {
-  schedtool -B -n 1 -e ionice -n 1 make -j 8 "$@"
-}
-
-function reposyncx() {
-  schedtool -B -n 1 -e ionice -n 1 repo sync -j 12 "$@"
-}
-
-function header() {
-  local i header name
-  [ -z $1 ] && return
-  for i in $@; do
-    if [ "`echo $i | grep '.h$'`" = "" ]; then
-      header="$i.h"
-    else
-      header="$i"
-    fi
-    name="`echo $header | tr '.' ' ' | awk {'print $1'} \
-      | tr [:lower:] [:upper:]`_H"
-    echo -n -e "#ifndef $name\n#define $name\n\n\n\n#endif /* $name */\n\n" \
-      > $header && echo "header: created \`$header'"
-  done
-}
-
-function quickmain() {
-  local i main dialect
-  for i in $@; do
-    if [ "$i" = "c" ]; then
-      dialect="c"
-    elif [ "$i" = "cpp" ]; then
-      dialect="cpp"
-    else
-      if [ -z $main ]; then
-        main=$i
+function gsearch() {
+  local query url i j
+  url="http://www.google.com/#q="
+  i=1
+  for j in $@; do
+    url+="$j"
+    if [ $i -ge 0 ]; then
+      if [ $i -lt $# ]; then
+        url+="+"
       fi
     fi
+    (( i++ ))
   done
-  if [ -z $dialect ]; then
-    dialect="c"
-  fi
-  if [ -z $main ]; then
-    main="main"
-  fi
-  if [ "`echo $main | grep '.c$'`" = "" ]; then
-    if [ "`echo $main | grep ".cpp$"`" = "" ]; then
-      case $dialect in
-        c) main="$main.c" ;;
-      cpp) main="$main.cpp" ;;
-      esac
-    fi
-  fi
-  echo -n -e "#include <stdio.h>\n\nint main(int argc," \
-  "char **argv)\n{\n    return 0;\n}\n\n" > $main \
-    && echo "quickmain: created \`$main'"
+  google-chrome "$url"
 }
 
-function yinstall() {
-  local pkgs="$@"
-  su -c "yum install $pkgs"
-}
-
-function yerase() {
-  local pkgs="$@"
-  su -c "yum erase $pkgs"
-}
-
-# miscellaneous -----------------------
-( which fortune &>/dev/null ) && \
-  echo -n -e "`fortune -a`\n--------------\n" | \
-  tee -a ~/Documents/fortunes
+( which fortune >/dev/null ) && \
+  echo -e "`fortune -a`\n------------------" | tee -a ~/Documents/fortunes

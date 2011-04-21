@@ -1,9 +1,0 @@
-# .bash_aliases
-# Fedora
-
-alias ..='cd ../'
-alias ls='ls -F --color=auto'
-alias la='ls -A --color=auto'
-alias ll='ls -Al --color=auto'
-alias attach='screen -raAd'
-alias recdesk='record_desktop $1'
