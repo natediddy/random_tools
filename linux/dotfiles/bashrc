@@ -64,4 +64,4 @@ function googleit() {
 }
 
 ( which fortune &>/dev/null ) && \
-  echo -e "`fortune -eo`\n---------------" | tee -a ~/Documents/fortunes
+  echo -e "`fortune -aeo`\n---------------" | tee -a ~/Documents/fortunes
