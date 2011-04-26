@@ -1,46 +1,45 @@
-# .bashrc
+#
+# ~/.bashrc
+#
 
-if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
-fi
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
-PS1='\u@\h:\w$ '
-[ "$EDITOR" != "vim" ] && export EDITOR=vim
-
-alias ..='cd ../'
-alias l='ls -F --color=auto'
-alias la='ls -AF --color=auto'
-alias ll='ls -AFl --color=auto'
-alias df='df -h'
 alias scrat='screen -raAd'
 alias scrls='screen -ls'
-alias chromei='google-chrome --incognito'
+
+alias ..='cd ../'
+
+alias pacin='sudo pacman -S'
+alias pacs='pacman -Ss'
+alias pacrm='sudo pacman -R'
+
+alias chromei='chromium --incognito'
+
+function coolprompt() {
+  local purp="\[\e[0;35m\]"
+  local cyan="\[\e[0;36m\]"
+  local green="\[\e[0;32m\]"
+  local none="\[\e[0m\]"
+  echo "$purp\u$cyan@$purp\h$cyan$green\w$cyan\$$none "
+}
+
+PS1=`coolprompt`
+[ "$EDITOR" != "vim" ] && export EDITOR=vim
 
 for path in ~/bin ~/android-sdk/tools \
   ~/android-sdk/platform-tools ~/android-ndk; do
-  if [ "x`echo "$PATH" | grep "$path"`" = "x" ]; then
-    if [ -d $path ]; then
+  if [ -d $path ]; then
+    if [ "`echo $PATH | grep $path`" = "" ]; then
       export PATH=$PATH:$path
     fi
   fi
 done
 
-function yin() {
-  local args="$@"
-  su -c "yum install $args"
-}
-
-function yrm() {
-  local args="$@"
-  su -c "yum remove $args"
-}
-
 function record_desktop() {
-  local video
-  if [ -z $1 ]; then
+  local video=$1
+  if [ -z $video ]; then
     video="`date +%m%d%Y`-$USER"
-  else
-    video="$1"
   fi
   ffmpeg -f alsa -i pulse -f x11grab -r 30 \
     -s 1366x768 -i :0.0 -acodec pcm_s16le \
@@ -48,7 +47,7 @@ function record_desktop() {
     -threads 0 $video.mkv
 }
 
-function gsearch() {
+function googleit() {
   local url i j
   url="http://www.google.com/#q="
   i=1
@@ -61,8 +60,8 @@ function gsearch() {
     fi
     (( i++ ))
   done
-  google-chrome "$url"
+  chromium "$url"
 }
 
-( which fortune >/dev/null ) && \
-  echo -e "`fortune -a`\n------------------" | tee -a ~/Documents/fortunes
+( which fortune &>/dev/null ) && \
+  echo -e "`fortune -eo`\n---------------" | tee -a ~/Documents/fortunes
