@@ -5,6 +5,13 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+alias ls='ls --color=auto'
+alias l='ls -F'
+alias la='ls -AF'
+alias ll='ls -AlF'
+
+alias grep='grep --color=auto'
+
 alias scrat='screen -raAd'
 alias scrls='screen -ls'
 
@@ -27,8 +34,8 @@ function coolprompt() {
 PS1=`coolprompt`
 [ "$EDITOR" != "vim" ] && export EDITOR=vim
 
-for path in ~/bin ~/android-sdk/tools \
-  ~/android-sdk/platform-tools ~/android-ndk; do
+for path in ~/bin ~/Android/sdk/tools \
+  ~/Android/sdk/platform-tools ~/Android/ndk; do
   if [ -d $path ]; then
     if [ "`echo $PATH | grep $path`" = "" ]; then
       export PATH=$PATH:$path
