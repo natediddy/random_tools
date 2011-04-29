@@ -101,6 +101,7 @@ function googleit() {
   url="http://www.google.com/#q="
   i=1
   for j in $@; do
+    url+="$j"
     if [ $i -ge 1 ]; then
       if [ $i -lt $# ]; then
         url+="+"
