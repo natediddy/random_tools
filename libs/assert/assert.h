@@ -15,23 +15,24 @@
 #include <iostream>
 #include <sstream>
 
-#define SHOW_ASSERT_FAILUIRE(msg) {                         \
-   std::ostringstream s;                                    \
-   s << "in " << __FILE__ << ':'                            \
-   << __LINE__ << ": \n\t" << msg << '\0';                  \
-   __present_assertion("Assertion", s.str().c_str());       \
+#define TAG "ASSERT"
+
+static inline void display_assert(const char *s) {
+  std::cout << TAG << ": " << s << std::endl;
 }
 
-#define assert(condition) {                                 \
-   if((condition)) {                                        \
-      const char *msg = "Assertion " #condition " caught";  \
-      SHOW_ASSERT_FAILUIRE(msg);                            \
-   }                                                        \
+#define SHOW_ASSERT_FAILURE(msg) {                           \
+  std::ostringstream s;                                      \
+  s << __FILE__ << ':' << __LINE__ << ": " << msg << '\0';   \
+  display_assert(s.str().c_str());                           \
 }
 
-static inline void __present_assertion(const char *c, const char *m) {
-   std::cerr << c << ": " << m << std::endl;
+#define assert(condition) {                                  \
+  if ((condition)) {                                         \
+    const char *msg = "Condition: '"#condition "' is true."; \
+    SHOW_ASSERT_FAILURE(msg);                                \
+  }                                                          \
 }
 
-#endif /* INCLUDED_ASSERT_H */
+#endif /* !INCLUDED_ASSERT_H */
 
