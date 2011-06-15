@@ -1,8 +1,9 @@
 nfsize
 ----------
 
-This is basically just a little project for learning purposes dealing with
-Linux file I/O.
+This is basically just a little project for learning purposes dealing mainly
+with the passing of addresses and dealing with multiple pointer indirection,
+and Linux file I/O.
 
 `nfsize' takes files and/or directories as command line arguments and
 calculates their size in bytes, or in the case of a directory,
