@@ -1,0 +1,12 @@
+nfsize
+----------
+
+This is basically just a little project for learning purposes dealing with
+Linux file I/O.
+
+`nfsize' takes files and/or directories as command line arguments and
+calculates their size in bytes, or in the case of a directory,
+how many items it contains.
+
+Sort of useful for quickly viewing a file's size (converted to KB, MB, or GB
+instead of plain bytes) within a console.
