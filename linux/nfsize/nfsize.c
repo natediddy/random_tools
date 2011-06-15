@@ -59,7 +59,7 @@ static nfselem **parse_args(char ***argv, nfselem **nfs)
         convert(&tmp);
         tmp->next = NULL;
         if (tmp->prev != NULL) {
-            for (; tmp != NULL; tmp = tmp->next) {
+            for (; tmp != NULL; tmp = tmp->prev) {
                 if (tmp->prev == NULL) {
                     break;
                 }
@@ -71,8 +71,12 @@ static nfselem **parse_args(char ***argv, nfselem **nfs)
 
 static void display_results(nfselem **nfs)
 {
+    printf("--------------\n");
     for (; (*nfs) != NULL; (*nfs) = (*nfs)->next) {
         if ((*nfs)->prev != NULL) {
+            if ((*nfs)->prev->sz_str != NULL) {
+                free((*nfs)->prev->sz_str);
+            }
             free((*nfs)->prev);
         }
         if ((*nfs)->f_def) {
@@ -90,11 +94,17 @@ static void display_results(nfselem **nfs)
         }
         if ((*nfs)->sz_str != NULL) {
             printf("SIZE: %s\n", (*nfs)->sz_str);
+        }
+        printf("--------------\n");
+        if ((*nfs)->next == NULL) {
+            break;
+        }
+    }
+    if ((*nfs) != NULL) {
+        if ((*nfs)->sz_str != NULL) {
             free((*nfs)->sz_str);
         }
-        if ((*nfs)->next == NULL) {
-            free(*nfs);
-        }
+        free((*nfs));
     }
     return;
 }
