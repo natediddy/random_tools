@@ -90,6 +90,7 @@ static void display_results(nfselem **nfs)
         }
         if ((*nfs)->sz_str != NULL) {
             printf("SIZE: %s\n", (*nfs)->sz_str);
+            free((*nfs)->sz_str);
         }
         if ((*nfs)->next == NULL) {
             free(*nfs);
