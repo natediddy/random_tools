@@ -27,6 +27,9 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This program takes 2 (optional) arguments: 'sync', and 'clean'.
+ * Buildcm will generate a temp bash script to run the Android build process.
  */
 
 #include <errno.h>
