@@ -2,26 +2,26 @@
  * dir.c
  */
 
+#include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include "nfsize.h"
 
 void is_dir(nfselem **nfs)
 {
-    char *cwd = NULL;
+    struct stat statbuf;
 
-    if ((cwd = get_current_dir_name()) == NULL) {
-        die("is_dir(): get_current_dir_name()");
-    }
-    if (chdir((*nfs)->name) == 0) {
-        (*nfs)->d_def = true;
-    }
-    (void)chdir(cwd);
-    if (cwd != NULL) {
-        free(cwd);
+    memset(&statbuf, 0, sizeof(struct stat));
+    if (!stat((*nfs)->name, &statbuf)) {
+        if (S_ISDIR(statbuf.st_mode)) {
+            (*nfs)->d_def = true;
+        }
+    } else {
+        die("is_dir(): %s\n", strerror(errno));
     }
 }
 

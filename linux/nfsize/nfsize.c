@@ -27,7 +27,7 @@ static nfselem *new_nfselem(void)
     return nfs;
 }
 
-static nfselem **parse_args(char ***argv, nfselem **nfs)
+static void parse_args(char ***argv, nfselem **nfs)
 {
     *++(*argv);
     do {
@@ -106,7 +106,6 @@ static void display_results(nfselem **nfs)
         }
         free((*nfs));
     }
-    return;
 }
 
 int main(int argc, char **argv)
@@ -114,7 +113,7 @@ int main(int argc, char **argv)
     nfselem *nfselem = NULL;
 
     prog = *argv;
-    if (strstr(argv[1],"help") != NULL) {
+    if (argc > 1 && strstr(argv[1],"help") != NULL) {
         nfsize_help();
     } else {
         parse_args(&argv, &nfselem);
