@@ -31,12 +31,12 @@ highlight function     ctermfg=none         cterm=bold
 
 highlight statement    ctermfg=none         cterm=bold
 highlight conditional  ctermfg=none         cterm=bold
-highlight repeat       ctermfg=none         cterm=none
+highlight repeat       ctermfg=none         cterm=bold
 highlight label        ctermfg=none         cterm=bold
 highlight operator     ctermfg=none         cterm=bold
 highlight keyword      ctermfg=none         cterm=bold
-highlight builtin      ctermfg=none         cterm=bold
-highlight exception    ctermfg=none         cterm=none
+"highlight builtin      ctermfg=none         cterm=bold
+highlight exception    ctermfg=none         cterm=bold
 
 highlight preproc      ctermfg=blue         cterm=none
 highlight include      ctermfg=blue         cterm=none
@@ -45,7 +45,7 @@ highlight macro        ctermfg=darkblue     cterm=none
 highlight precondit    ctermfg=blue         cterm=none
 
 highlight type         ctermfg=magenta      cterm=none
-highlight storageclass ctermfg=cyan         cterm=none
+highlight storageclass ctermfg=magenta      cterm=none
 highlight structure    ctermfg=magenta      cterm=none
 highlight typedef      ctermfg=magenta      cterm=none
 
