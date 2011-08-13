@@ -17,7 +17,7 @@ let g:colors_name = "satori_n8"
 
 " Vim colors
 highlight normal       ctermfg=none         cterm=none
-highlight comment      ctermfg=black        cterm=none
+highlight comment      ctermfg=cyan         cterm=bold
 
 highlight constant     ctermfg=green        cterm=none
 highlight string       ctermfg=green        cterm=none
