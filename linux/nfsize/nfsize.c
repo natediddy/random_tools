@@ -22,7 +22,7 @@ static nfselem *new_nfselem(void)
     nfs->sz_str = NULL;
     nfs->f_def = false;
     nfs->d_def = false;
-    nfs->bytes = 0;
+    nfs->bytes = 0L;
     nfs->d_items = -1;
     return nfs;
 }

@@ -4,32 +4,33 @@
 
 #include "nfsize.h"
 
+#define KB 1024L
+#define MB (KB * KB)
+#define GB (KB * MB)
+
 void convert(nfselem **nfs)
 {
     if (!(*nfs)->bytes) {
         return;
     }
-    const int KB = 1024;
-    const int MB = 1024*1024;
-    const int GB = 1024*(1024*1024);
-    int final;
-    char str[108], *abbr;
+    double final;
+    char str[30], *abbr;
 
-    if (((*nfs)->bytes/GB) > 0) {
-        final = (*nfs)->bytes/GB;
+    if (((*nfs)->bytes/(long)GB) > 0) {
+        final = (double)(*nfs)->bytes/(double)GB;
         abbr = "GB";
-    } else if (((*nfs)->bytes/MB) > 0) {
-        final = (*nfs)->bytes/MB;
+    } else if (((*nfs)->bytes/(long)MB) > 0) {
+        final = (double)(*nfs)->bytes/(double)MB;
         abbr = "MB";
-    } else if (((*nfs)->bytes/KB) > 0) {
-        final = (*nfs)->bytes/KB;
+    } else if (((*nfs)->bytes/(long)KB) > 0) {
+        final = (double)(*nfs)->bytes/(double)KB;
         abbr = "KB";
     } else {
-        final = (*nfs)->bytes;
+        final = (double)(*nfs)->bytes;
         abbr = "Bytes";
     }
 
-    snprintf(str, 108, "%ld %s", final, abbr);
+    snprintf(str, 30, "%.1f %s", final, abbr);
     (*nfs)->sz_str = strdup(str);
 }
 

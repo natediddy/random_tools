@@ -29,7 +29,7 @@ void f_getbytes(nfselem **nfs)
 
     memset(&statbuf, 0, sizeof(struct stat));
     if (!stat((*nfs)->name, &statbuf)) {
-        (*nfs)->bytes = (unsigned int)statbuf.st_size;
+        (*nfs)->bytes = (long)statbuf.st_size;
     } else {
         die("f_getbytes(): %s\n", strerror(errno));
     }

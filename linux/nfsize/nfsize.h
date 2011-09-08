@@ -13,7 +13,7 @@ typedef unsigned char bool;
 struct nfsize_element
 {
     char *name, *sz_str;
-    unsigned int bytes;
+    long bytes;
     bool f_def, d_def;
     int d_items;
     struct nfsize_element *next, *prev;

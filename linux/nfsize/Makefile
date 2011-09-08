@@ -36,12 +36,6 @@ die.o: nfsize.h
 conv.o: nfsize.h
 	$(CC) $(CFLAGS) -c conv.c
 
-deb:
-	@echo "this is where I will make a .deb installer"
-
-rpm:
-	@echo "this is where I will make a .rpm installer"
-
 clean:
 	@rm -f $(TARGET) $(OBJECT)
 
