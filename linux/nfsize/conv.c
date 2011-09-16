@@ -2,6 +2,7 @@
  * conv.c
  */
 
+#include <string.h>
 #include "nfsize.h"
 
 #define KB 1024L
@@ -30,7 +31,7 @@ void convert(nfselem **nfs)
         abbr = "Bytes";
     }
 
-    snprintf(str, 30, "%.1f %s", final, abbr);
+    sprintf(str, "%.1f %s", final, abbr);
     (*nfs)->sz_str = strdup(str);
 }
 

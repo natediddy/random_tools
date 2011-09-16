@@ -4,6 +4,10 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include <unistd.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -72,28 +76,5 @@ static bool d_is_dir(char *p)
     (void)chdir(cwd);
     free(cwd);
     return true;
-}
-
-/*static int private_d_getbytes(char *p)
-{}*/
-
-void d_getbytes(nfselem **nfs)
-{
-    /*DIR *dir = NULL;
-    struct dirent *entry = NULL;
-
-    if (!*(nfs)->d_def) {
-        return;
-    }
-    if ((dir = opendir(*(nfs)->name)) == NULL) {
-        die("d_getbytes(): opendir()");
-    }
-    while ((entry = readdir(dir)) != NULL) {
-        if (!strcmp(entry->d_name,".") || !strcmp(entry->d_name,"..")) {
-            continue;
-        }
-        char p[FILENAME_MAX];
-    }*/
-    return;
 }
 

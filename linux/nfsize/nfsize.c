@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "nfsize.h"
 
 static void nfsize_help(void)
@@ -54,7 +55,7 @@ static void parse_args(char ***argv, nfselem **nfs)
             is_file(&tmp);
         }
         dir_contents(&tmp);
-        d_getbytes(&tmp);
+        /*d_getbytes(&tmp);*/
         f_getbytes(&tmp);
         convert(&tmp);
         tmp->next = NULL;
