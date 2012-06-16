@@ -9,6 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define DEFAULT_P_NAME "len"
+
+const char *p_name;
+
 typedef struct {
   enum {
     UK, IN, FT, MI,
@@ -300,11 +304,33 @@ convert_unit (unit *i, unit *o)
     (*c_fun) (i->val, o);
 }
 
+static void
+set_p_name (char *g_name)
+{
+  if (!g_name || !*g_name) {
+    p_name = DEFAULT_P_NAME;
+    return;
+  }
+
+  char *n = strrchr (g_name, '/');
+
+  if (!n) {
+    p_name = g_name;
+    return;
+  }
+
+  *++n;
+  p_name = n;
+}
+
 int
 main (int argc, char **argv)
 {
+  set_p_name (*argv);
+
   if (argc != 4) {
-    fprintf (stderr, "usage: %s QUANTITY IN-UNIT OUT-UNIT\n", argv[0]);
+    fprintf (stderr, "usage: %s QUANTITY IN-UNIT OUT-UNIT\n"
+        "    Ex: %s 10 ft in\n", p_name, p_name);
     return EXIT_FAILURE;
   }
 
@@ -319,19 +345,19 @@ main (int argc, char **argv)
 
   if (i_unit.type == UK) {
     fprintf (stderr, "%s: error: not a valid unit of length: `%s'\n",
-        argv[0], i_unit.str);
+        p_name, i_unit.str);
     return EXIT_FAILURE;
   }
 
   if (o_unit.type == UK) {
     fprintf (stderr, "%s: error: not a valid unit of length: `%s'\n",
-        argv[0], o_unit.str);
+        p_name, o_unit.str);
     return EXIT_FAILURE;
   }
 
   convert_unit (&i_unit, &o_unit);
   fprintf (stdout, "%s: %g%s = %g%s\n",
-      argv[0], i_unit.val, i_unit.str,
+      p_name, i_unit.val, i_unit.str,
       o_unit.val, o_unit.str);
   return EXIT_SUCCESS;
 }
