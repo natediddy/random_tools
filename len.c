@@ -329,8 +329,22 @@ main (int argc, char **argv)
   set_p_name (*argv);
 
   if (argc != 4) {
+    if (argc > 1 && (!strcmp (argv[1], "-u") || !strcmp (argv[1], "--units")))
+    {
+      fprintf (stdout, "%s: valid units are:\n"
+          "      in  --  inches\n"
+          "      ft  --  feet\n"
+          "      mi  --  miles\n"
+          "      mm  --  millimeter\n"
+          "      cm  --  centimeter\n"
+          "      m   --  meter\n"
+          "      km  --  kilometer\n", p_name);
+      return EXIT_SUCCESS;
+    }
     fprintf (stderr, "usage: %s QUANTITY IN-UNIT OUT-UNIT\n"
-        "    Ex: %s 10 ft in\n", p_name, p_name);
+        "      Ex: %s 10 ft in\n"
+        "      Use `-u' or `--units' to see available units\n",
+        p_name, p_name);
     return EXIT_FAILURE;
   }
 
