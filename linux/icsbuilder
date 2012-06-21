@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# icsbuilder
+# 06/21/12
+#
+# Place in root of ICS source tree ($ANDROID_BUILD_TOP)
+#
+
+export USE_CCACHE=1
+export CCACHE_DIR=`pwd`/.ccache
+r_sync=1
+clean=1
+devs=()
+
+is_device_name () {
+  [ -f "`find device -name "$1" -type d`/BoardConfig.mk" ] \
+    && return 0 || return 1
+}
+
+for i in $@
+do
+  if [ "$i" = "--no-sync" ]
+  then
+    r_sync=0
+  elif [ "$i" = "--no-clean" ]
+  then
+    clean=0
+  else
+    if ! is_device_name $i
+    then
+      echo "$0: \`$i' not a valid device"
+    else
+      devs[${#devs[@]}]=$i
+    fi
+  fi
+done
+
+[ ${#devs[@]} -eq 0 ] && exit 1
+
+. build/envsetup.sh
+(( r_sync )) && reposync
+(( clean )) && mka installclean
+
+for i in ${devs[@]}
+do
+  lunch cm_$i-eng
+  mka bacon
+done
