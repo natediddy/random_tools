@@ -1,5 +1,5 @@
-#ifndef CM_STRING_H_INCLUDED
-#define CM_STRING_H_INCLUDED
+#ifndef STRING_H_INCLUDED
+#define STRING_H_INCLUDED
 
 #include <cstddef>
 
@@ -355,5 +355,5 @@ private:
     CaseSensitivity mCaseSensitivity;
 };
 
-#endif /* CM_STRING_H_INCLUDED */
+#endif /* STRING_H_INCLUDED */
 

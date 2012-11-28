@@ -1,0 +1,9 @@
+Strings
+
+This string class uses no templates and can convert back and forth between
+the basic integer types.
+
+For now only the standard ASCII character set is supported.
+
+To use the string with functions that expect char* arguments, use
+the buffer() method.
