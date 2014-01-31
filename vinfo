@@ -1,0 +1,181 @@
+#!/usr/bin/env python
+#
+# Display video information
+# Nathan Forbes
+#
+
+import os
+import re
+import subprocess
+import sys
+
+program_name = os.path.basename(sys.argv[0])
+program_version = '0.1'
+
+avprobe_program = 'avprobe'
+video_extensions = ['3gpp', 'amv', 'asf', 'avi', 'divx', 'dpg',
+                    'm4v', 'mkv', 'moov', 'mov', 'mp4', 'mpeg',
+                    'mpg', 'qt', 'rm', 'swf', 'wmv']
+
+def print_error(s):
+  sys.stderr.write(s + '\n')
+
+def show_usage(error):
+  s = 'Usage: %s VIDEO_FILENAME...' % program_name
+  if error:
+    print_error(s)
+  else:
+    print s
+
+def show_help():
+  show_usage(False)
+  print 'Options:'
+  print '  -d, --duration    Display the duration of VIDEO_FILENAME'
+  print '  -f, --fps         Display the FPS of VIDEO_FILENAME'
+  print '  -r, --resolution  Display the resolution of VIDEO_FILENAME'
+  print '  -?, -h, --help    Display this message and exit'
+  print '  -v, --version     Display version information and exit'
+  print
+  print 'NOTE: If no options are present then this tool'
+  print '      will show all the details of VIDEO_FILENAME.'
+  print
+  print 'Supported video types (by file extension):'
+  sys.stdout.write('  ')
+  i = 0
+  for x in video_extensions:
+    if i:
+      sys.stdout.write(', ')
+    sys.stdout.write('%s' % x)
+    i += 1
+  sys.stdout.write('\n')
+  print
+  print 'NOTE: This tool requires the external'
+  print '      program `%s\' to be installed' % avprobe_program
+  sys.exit(0)
+
+def show_version():
+  print '%s %s' % (program_name, program_version)
+  sys.exit(0)
+
+def has_avprobe_program():
+  path = os.getenv('PATH')
+  if not path:
+    print_error('%s: error: environment variable PATH not set' % program_name)
+    sys.exit(1)
+  for p in path.split(os.pathsep):
+    if os.path.isfile(os.path.join(p, avprobe_program)):
+      return True
+  return False
+
+def has_valid_extension(filename):
+  return filename.split('.')[-1] in video_extensions
+
+def get_info(filename):
+  cmd = [avprobe_program, filename]
+  info = ''
+  try:
+    p = subprocess.Popen(cmd, stderr=subprocess.PIPE)
+  except OSError as e:
+    print_error('%s: error: %s' % (program_name, e))
+    sys.exit(1)
+  info = p.stderr.read().strip()
+  if p.wait() != 0:
+    print_error('%s: error: `%s %s\' command failed' %
+                  (program_name, cmd[0], cmd[1]))
+    print_error('%s: error: %s' % (program_name, e))
+    sys.exit(1)
+  if info.find('Video:') < 0:
+    print_error('%s: error: `%s\' has no video data' %
+                  (program_name, filename))
+    return ''
+  return info
+
+def get_duration(info):
+  if info.find('Duration: ') >= 0:
+    return info.split('Duration: ')[-1].split(',')[0].split('.')[0].strip()
+  return ''
+
+def get_fps(info):
+  if info.find('fps') >= 0:
+    return info.split('fps')[0].split(',')[-1].strip()
+  return ''
+
+def get_resolution(info):
+  x = re.compile('[0-9]*x[0-9]*')
+  if x:
+    result = x.search(info.split('Video:')[-1].split('\n')[0])
+    return result.group()
+  return ''
+
+def main():
+  if len(sys.argv) == 1:
+    show_usage(True)
+    sys.exit(1)
+  if not has_avprobe_program():
+    print_error('%s: error: external program `%s\' not installed' %
+                  (program_name, avprobe_program))
+  argv = sys.argv[1:]
+  duration = fps = resolution = False
+  if '-h' in argv or '--help' in argv:
+    show_help()
+  if '-v' in argv or '--version' in argv:
+    show_version()
+  if '-d' in argv or '--duration' in argv:
+    duration = True
+  if '-f' in argv or '--fps' in argv:
+    fps = True
+  if '-r' in argv or '--resolution' in argv:
+    resolution = True
+  if '-dfr' in argv or '-drf' in argv or \
+     '-fdr' in argv or '-frd' in argv or \
+     '-rdf' in argv or '-rfd' in argv:
+    duration = fps = resolution = True
+  if '-df' in argv or '-fd' in argv:
+    duration = fps = True
+  if '-dr' in argv or '-rd' in argv:
+    duration = resolution = True
+  if '-fr' in argv or '-rf' in argv:
+    fps = resolution = True
+  if not duration and not fps and not resolution:
+    duration = fps = resolution = True
+  for x in argv:
+    if x.startswith('-') or not os.path.isfile(x):
+      continue
+    d = f = r = ''
+    if not has_valid_extension(x):
+      print_error('%s: warning: skipping unsupported file `%s\'' %
+                    (program_name, x))
+      continue
+    info = get_info(x)
+    if not info:
+      sys.exit(1)
+    if duration:
+      d = get_duration(info)
+      if not d:
+        d = '(unknown)'
+    if fps:
+      f = get_fps(info)
+      if not f:
+        f = '(unknown)'
+    if resolution:
+      r = get_resolution(info)
+      if not r:
+        r = '(unknown)'
+    if d or f or r:
+      sys.stdout.write('%s: ' % os.path.basename(x))
+    if d:
+      sys.stdout.write(d)
+    if f:
+      if d:
+        sys.stdout.write(' - ')
+      sys.stdout.write(f)
+    if r:
+      if d or f:
+        sys.stdout.write(' - ')
+      sys.stdout.write(r)
+    if d or f or r:
+      sys.stdout.write('\n')
+  sys.exit(0)
+
+if __name__ == '__main__':
+  main()
