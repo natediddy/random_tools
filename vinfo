@@ -92,7 +92,21 @@ def get_info(filename):
 
 def get_duration(info):
   if info.find('Duration: ') >= 0:
-    return info.split('Duration: ')[-1].split(',')[0].split('.')[0].strip()
+    i = info.split('Duration: ')[-1].split(',')[0].split('.')[0].strip()
+    h, m, s = i.split(':')
+    h, m, s = int(h), int(m), int(s)
+    d = ''
+    if h:
+      d += '%ih' % h
+      if not m and not s:
+        return d
+    if m:
+      d += '%im' % m
+      if not s:
+        return d
+    if s:
+      d += '%is' % s
+    return d
   return ''
 
 def get_fps(info):
