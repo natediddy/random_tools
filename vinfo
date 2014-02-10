@@ -82,7 +82,6 @@ def get_info(filename):
   if p.wait() != 0:
     print_error('%s: error: `%s %s\' command failed' %
                   (program_name, cmd[0], cmd[1]))
-    print_error('%s: error: %s' % (program_name, e))
     sys.exit(1)
   if info.find('Video:') < 0:
     print_error('%s: error: `%s\' has no video data' %
@@ -90,23 +89,25 @@ def get_info(filename):
     return ''
   return info
 
+def make_duration_string(hours, minutes, seconds):
+  s = ''
+  if hours:
+    s += '%ih' % hours
+    if not minutes and not seconds:
+      return s
+  if minutes:
+    s += '%im' % minutes
+    if not seconds:
+      return s
+  if seconds:
+    s += '%is' % seconds
+  return s
+
 def get_duration(info):
   if info.find('Duration: ') >= 0:
-    i = info.split('Duration: ')[-1].split(',')[0].split('.')[0].strip()
-    h, m, s = i.split(':')
-    h, m, s = int(h), int(m), int(s)
-    d = ''
-    if h:
-      d += '%ih' % h
-      if not m and not s:
-        return d
-    if m:
-      d += '%im' % m
-      if not s:
-        return d
-    if s:
-      d += '%is' % s
-    return d
+    h, m, s = \
+   info.split('Duration: ')[-1].split(',')[0].split('.')[0].strip().split(':')
+    return make_duration_string(int(h), int(m), int(s))
   return ''
 
 def get_fps(info):
